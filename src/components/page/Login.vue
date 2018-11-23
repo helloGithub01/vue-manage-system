@@ -1,15 +1,15 @@
 <template>
     <div class="login-wrap">
         <div class="ms-login">
-            <div class="ms-title">后台管理系统</div>
+            <div class="ms-title">财务管理系统</div>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0px" class="ms-content">
                 <el-form-item prop="username">
-                    <el-input v-model="ruleForm.username" placeholder="username">
+                    <el-input v-model="ruleForm.username" placeholder="用户名">
                         <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="password">
-                    <el-input type="password" placeholder="password" v-model="ruleForm.password" @keyup.enter.native="submitForm('ruleForm')">
+                    <el-input type="password" placeholder="密码" v-model="ruleForm.password" @keyup.enter.native="submitForm('ruleForm')">
                         <el-button slot="prepend" icon="el-icon-lx-lock"></el-button>
                     </el-input>
                 </el-form-item>
@@ -43,8 +43,8 @@
                 logining: false,
                 captchaPath:'',
                 ruleForm: {
-                    username: 'admin',
-                    password: '123456',
+                    username: '',
+                    password: '',
                     captcha:''
                 },
                 rules: {
@@ -71,29 +71,29 @@
                 this.$refs[ruleForm].validate((valid) => {
                     this.logining = true;
                     if (valid) {
-                        localStorage.setItem('ms_username',this.ruleForm.username);
                         // sessionStorage.setItem('ms_username',this.ruleForm.username);
-                        this.$router.push('/');
 
-                        var loginParams = { username: this.ruleForm.username, passwd: this.ruleForm.password };
-                        //判断复选框是否被勾选 勾选则调用配置cookie方法
-
-                        sessionStorage.removeItem('Token');
+                        var loginParams = {
+                            username: this.ruleForm.username,
+                            password: this.ruleForm.password,
+                            uuid: this.ruleForm.uuid,
+                            captcha: this.ruleForm.captcha
+                        };
+                        //清除缓存
+                        sessionStorage.removeItem('token');
                         requestLogin(loginParams).then(data => {
                             this.logining = false;
-                            let code =data.code;
-                            let mes=data.message;
-                            if (code !== 0) {
-                                this.$message({
-                                    message: mes,
-                                    type: 'error'
-                                });
-                            } else {
-                                let { returnToken , userCode} = data.data;
-                                sessionStorage.setItem('userCode', userCode);
-                                sessionStorage.setItem('Token', returnToken);
 
+                            if (data && data.code === 0) {
+                                localStorage.setItem('ms_username',this.ruleForm.username);
+                                this.$message.success(data.msg);
+                                sessionStorage.setItem('token', data.token);
+                                this.$router.push('/');
+                            } else {
+                                this.getCaptcha();
+                                this.$message.error(data.msg)
                             }
+
                         });
                     } else {
                         this.logining = false;
