@@ -1,0 +1,33 @@
+<template>
+    <el-dialog
+        title="预览大图"
+        :close-on-click-modal="false"
+        @close="closeHandle"
+        :visible.sync="visible">
+        <div >
+            <img :src="url" width="100%"/>
+        </div>
+    </el-dialog>
+</template>
+
+<script>
+    export default {
+        data () {
+            return {
+                visible: false,
+                url: ''
+            }
+        },
+        methods: {
+            init (url) {
+                this.url = url
+                this.visible = true
+            },
+            // 弹窗关闭时
+            closeHandle () {
+                this.fileList = []
+                this.$emit('refreshDataList')
+            }
+        }
+    }
+</script>

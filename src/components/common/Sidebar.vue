@@ -46,7 +46,12 @@
                     {
                         icon: 'el-icon-lx-cascades',
                         index: 'table',
-                        title: '基础表格'
+                        title: '画稿表格'
+                    },
+                    {
+                        icon: 'el-icon-lx-cascades',
+                        index: 'basDic',
+                        title: '数据字典'
                     },
                     {
                         icon: 'el-icon-lx-copy',
@@ -60,7 +65,7 @@
                         subs: [
                             {
                                 index: 'form',
-                                title: '基本表单'
+                                title: '画稿表单'
                             },
                             {
                                 index: '3-2',

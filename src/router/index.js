@@ -27,7 +27,7 @@ export default new Router({
                 {
                     path: '/table',
                     component: resolve => require(['../components/page/BaseTable.vue'], resolve),
-                    meta: { title: '基础表格' }
+                    meta: { title: '画稿表格' }
                 },
                 {
                     path: '/tabs',
@@ -37,7 +37,7 @@ export default new Router({
                 {
                     path: '/form',
                     component: resolve => require(['../components/page/BaseForm.vue'], resolve),
-                    meta: { title: '基本表单' }
+                    meta: { title: '画稿表单' }
                 },
                 {
                     // 富文本编辑器组件
@@ -49,13 +49,13 @@ export default new Router({
                     // markdown组件
                     path: '/markdown',
                     component: resolve => require(['../components/page/Markdown.vue'], resolve),
-                    meta: { title: 'markdown编辑器' }    
+                    meta: { title: 'markdown编辑器' }
                 },
                 {
                     // 图片上传组件
                     path: '/upload',
                     component: resolve => require(['../components/page/Upload.vue'], resolve),
-                    meta: { title: '文件上传' }   
+                    meta: { title: '文件上传' }
                 },
                 {
                     // vue-schart组件
@@ -84,7 +84,13 @@ export default new Router({
                     path: '/403',
                     component: resolve => require(['../components/page/403.vue'], resolve),
                     meta: { title: '403' }
-                }
+                },
+                {
+                    // 数据字典
+                    path: '/basDic',
+                    component: resolve => require(['../components/page/BaseData/BaseDic.vue'], resolve),
+                    meta: { title: '数据字典'}
+                },
             ]
         },
         {

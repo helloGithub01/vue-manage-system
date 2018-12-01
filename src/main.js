@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import global from './Global';
 import App from './App';
 import router from './router';
 import axios from 'axios';
@@ -10,6 +11,7 @@ import "babel-polyfill";
 
 Vue.use(ElementUI, { size: 'small' });
 Vue.prototype.$axios = axios;
+Vue.prototype.global = global;//全局
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {

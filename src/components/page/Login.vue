@@ -17,6 +17,7 @@
                     <el-row :gutter="20">
                         <el-col :span="14">
                             <el-input v-model="ruleForm.captcha" placeholder="验证码">
+                                <el-button slot="prepend" icon="el-icon-lx-info"></el-button>
                             </el-input>
                         </el-col>
                         <el-col :span="10" class="login-captcha">
