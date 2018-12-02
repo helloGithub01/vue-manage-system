@@ -90,8 +90,7 @@
                 <el-table-column prop="orderDate" label="接单日期" align="center" sortable width="120"
                                  :formatter="dataFormatter">
                     <template slot-scope="scope">
-                        <i class="el-icon-lx-time" style="font-size: 15px;color: #2b33ff">{{
-                            dataFormatter1(scope.row.orderDate) }}</i>
+                        <i class="el-icon-lx-time" style="font-size: 15px;color: #2b33ff">{{dataFormatter1(scope.row.orderDate) }}</i>
                     </template>
                 </el-table-column>
                 <el-table-column prop="drawName" label="画稿名称" align="center" width="150"></el-table-column>
@@ -111,8 +110,7 @@
                 </el-table-column>
                 <el-table-column prop="drawAmount" label="画稿金额$(元)" sortable align="center" width="140">
                     <template slot-scope="scope">
-                        <i class="el-icon-lx-redpacket_fill" style="font-size: 15px;color: #ff5900">{{
-                            scope.row.drawAmount }}</i>
+                        <i class="el-icon-lx-redpacket_fill" style="font-size: 15px;color: #ff5900">{{scope.row.drawAmount | rounding}}</i>
                     </template>
                 </el-table-column>
                 <el-table-column prop="state" label="付款状态" align="center" width="100">
@@ -170,9 +168,8 @@
                         </el-row>
                         <el-row :gutter="15">
                             <el-col :span="12">
-                                <el-form-item label="备注" class="form-label">
-                                    <el-input v-model="draw.desc" type="textarea" :rows="2" style="width: 100%;"
-                                              :disabled="true"></el-input>
+                                <el-form-item label="扣税金额" class="form-label">
+                                    <el-input v-model="draw.taxAmount" style="width: 100%;" :disabled="true"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
@@ -195,7 +192,7 @@
                                     style="width: 80%;"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="收款方式">
-                    <el-select v-model="value" placeholder="请选择"  style="width: 80%;">
+                    <el-select v-model="value" placeholder="请选择" style="width: 80%;">
                         <el-option
                             v-for="item in cashType"
                             :key="item.value"
@@ -204,10 +201,10 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="收款金额"  style="width: 80%;">
+                <el-form-item label="收款金额" style="width: 80%;">
                     <el-input-number v-model="form.price" :min="0" :max="10000"></el-input-number>
                 </el-form-item>
-                <el-form-item label="收款人"  style="width: 80%;">
+                <el-form-item label="收款人" style="width: 80%;">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
             </el-form>
@@ -218,13 +215,13 @@
         </el-dialog>
 
         <!--上传弹框-->
-        <el-dialog title="上传" :visible.sync="uploadVisible" width="30%">
+        <el-dialog title="上传画稿" :visible.sync="uploadVisible" width="30%">
             <el-upload align="center"
-                class="avatar-uploader"
-                :action="123"
-                :show-file-list="false"
-                :on-success="uploadImg"
-                :before-upload="123">
+                       class="avatar-uploader"
+                       :action="123"
+                       :show-file-list="false"
+                       :on-success="uploadImg"
+                       :before-upload="123">
                 <img v-if="false" :src="123" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -290,18 +287,18 @@
                 },
                 tableData: [],
                 cashDatas: [],
-                cashType:[{
-                    value:"XJ",
-                    label:"现金"
-                },{
-                    value:"WX",
-                    label:"微信"
-                },{
-                    value:"ZFB",
-                    label:"支付宝"
-                },{
-                    value:"YHK",
-                    label:"银行卡"
+                cashType: [{
+                    value: "XJ",
+                    label: "现金"
+                }, {
+                    value: "WX",
+                    label: "微信"
+                }, {
+                    value: "ZFB",
+                    label: "支付宝"
+                }, {
+                    value: "YHK",
+                    label: "银行卡"
                 }],
                 draw: {},
                 cur_page: 1,
@@ -311,9 +308,9 @@
                 del_list: [],
                 is_search: false,
                 editVisible: false,
-                cashVisible:false,
-                uploadVisible:false,
-                confirmVisible:false,
+                cashVisible: false,
+                uploadVisible: false,
+                confirmVisible: false,
                 delVisible: false,
                 form: {
                     name: '',
@@ -348,6 +345,11 @@
                         }
                     }
                 })
+            }
+        },
+        filters:{
+            rounding (value) {
+                return value.toFixed(2)
             }
         },
         methods: {
@@ -390,14 +392,14 @@
                 })
             },
             getSummaries(param) {
-                const { columns, data } = param;
+                const {columns, data} = param;
                 const sums = [];
                 columns.forEach((column, index) => {
                     if (index === 0) {
                         sums[index] = '总价';
                         return;
                     }
-                    if(index == 7) {
+                    if (index == 7) {
                         const values = data.map(item =>
                             Number(item[column.property]));
                         if (!values.every(value => isNaN(value))) {
@@ -457,11 +459,11 @@
             searchCash(index, row) {
 
             },
-            handleCash(index,row){
+            handleCash(index, row) {
                 this.cashVisible = true;
             },
-            handleUpload(index,row){
-              this.uploadVisible = true;
+            handleUpload(index, row) {
+                this.uploadVisible = true;
             },
             //确认画稿完结
             confirm(index, row) {
@@ -481,7 +483,7 @@
                 this.idx = index;
                 this.delVisible = true;
             },
-            uploadImg(){
+            uploadImg() {
 
             },
             //添加画稿
