@@ -17,49 +17,51 @@
                         </el-col>
                         <el-col :span="4">
                             <el-form-item label="画稿客户">
-                                <el-select v-model="dataForm.drawType" placeholder="画稿类型" class="handle-select mr10">
-                                    <el-option key="1" label="风景" value=""></el-option>
-                                    <el-option key="2" label="人文" value=""></el-option>
-                                    <el-option key="3" label="美食" value=""></el-option>
+                                <el-select v-model="dataForm.source" placeholder="画稿客户" class="handle-select mr10">
+                                    <el-option key="1" label="十月微城" value="十月微城"></el-option>
+                                    <el-option key="2" label="尘星文化" value="尘星文化"></el-option>
+                                    <el-option key="3" label="中国国家地理" value="中国国家地理"></el-option>
+                                    <el-option key="4" label="散客" value="散客"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="4">
                             <el-form-item label="画稿类型">
                                 <el-select v-model="dataForm.drawType" placeholder="画稿类型" class="handle-select mr10">
-                                    <el-option key="1" label="风景" value=""></el-option>
-                                    <el-option key="2" label="人文" value=""></el-option>
-                                    <el-option key="3" label="美食" value=""></el-option>
+                                    <el-option key="1" label="风景" value="风景"></el-option>
+                                    <el-option key="2" label="人文" value="人文"></el-option>
+                                    <el-option key="3" label="地图" value="地图"></el-option>
+                                    <el-option key="4" label="美食" value="美食"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
                             <el-form-item label="画稿金额">
-                                <el-input-number v-model="dataForm.min" :min="0" :max="2000"></el-input-number>
+                                <el-input-number v-model="dataForm.min" :min="0" :max="10000"></el-input-number>
                                 -
-                                <el-input-number v-model="dataForm.max" :min="0" :max="2000"></el-input-number>
+                                <el-input-number v-model="dataForm.max" :min="0" :max="10000"></el-input-number>
                             </el-form-item>
                         </el-col>
                         <el-col :span="4">
-                            <el-form-item label="付款状态">
+                            <el-form-item label="收款状态">
                                 <el-select v-model="dataForm.state" placeholder="付款状态" class="handle-select mr10">
-                                    <el-option key="1" label="待付" value=""></el-option>
-                                    <el-option key="2" label="部分付" value=""></el-option>
-                                    <el-option key="3" label="完结" value=""></el-option>
+                                    <el-option key="0" label="未收款" value="0"></el-option>
+                                    <el-option key="1" label="部分收款" value="1"></el-option>
+                                    <el-option key="2" label="收完款" value="2"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="8">
-                            <el-form-item label="创建时间">
+                            <el-form-item label="接单日期">
                                 <el-date-picker
                                     v-model="dataForm.dataValue"
-                                    type="datetimerange"
+                                    type="daterange"
                                     range-separator="至"
                                     start-placeholder="开始日期"
                                     value-format="yyyy-MM-dd HH:mm:ss"
-                                    format="yyyy-MM-dd HH:mm:ss"
+                                    format="yyyy-MM-dd"
                                     end-placeholder="结束日期">
                                 </el-date-picker>
                             </el-form-item>
@@ -67,8 +69,8 @@
                         <el-col :span="4">
                             <el-form-item label="是否定金">
                                 <el-select v-model="dataForm.isPay" placeholder="是否定金" class="handle-select mr10">
-                                    <el-option key="1" label="是" value=""></el-option>
-                                    <el-option key="2" label="否" value=""></el-option>
+                                    <el-option key="1" label="未付" value="0"></el-option>
+                                    <el-option key="2" label="已付" value="1"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -113,7 +115,7 @@
                         <i class="el-icon-lx-redpacket_fill" style="font-size: 15px;color: #ff5900">{{scope.row.drawAmount | rounding}}</i>
                     </template>
                 </el-table-column>
-                <el-table-column prop="state" label="付款状态" align="center" width="100">
+                <el-table-column prop="state" label="收款状态" align="center" width="100">
                     <template slot-scope="scope">
                         <el-tag v-if="scope.row.state == 0" type="info">{{ stateFormatter(scope.row.state) }}</el-tag>
                         <el-tag v-else-if="scope.row.state == 1" type="warning">{{ stateFormatter(scope.row.state) }}
@@ -122,8 +124,8 @@
                         </el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="createDate" label="创建时间" align="center" width="200"></el-table-column>
-                <el-table-column prop="createUser" label="创建人" align="center" width="120"></el-table-column>
+                <el-table-column prop="confirmDate" label="完结时间" align="center" width="180"></el-table-column>
+                <el-table-column prop="createUser" label="接单人" align="center" width="120"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-goods" @click="handleCash(scope.$index, scope.row)">收款
@@ -150,32 +152,43 @@
                         <el-table-column prop="driverName" label="收款方式" align="center"></el-table-column>
                         <el-table-column prop="materialCode" label="收款人" align="center"></el-table-column>
                         <el-table-column prop="materialName" label="收款金额" align="center"></el-table-column>
+                        <el-table-column prop="materialName" label="协助金额" align="center"></el-table-column>
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="画稿详情" name="second">
                     <el-form :inline="true" :model="draw" class="demo-form-inline" label-width="200px">
                         <el-row :gutter="15">
-                            <el-col :span="12">
+                            <el-col :span="8">
                                 <el-form-item label="定金金额" class="form-label">
                                     <el-input v-model="draw.deposit" style="width: 100%;" :disabled="true"></el-input>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="12">
+                            <el-col :span="8">
                                 <el-form-item label="是否多人" class="form-label">
+                                    <el-input v-model="draw.deposit" style="width: 100%;" :disabled="true"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="用时天数" class="form-label">
                                     <el-input v-model="draw.deposit" style="width: 100%;" :disabled="true"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
                         <el-row :gutter="15">
-                            <el-col :span="12">
+                            <el-col :span="8">
                                 <el-form-item label="扣税金额" class="form-label">
                                     <el-input v-model="draw.taxAmount" style="width: 100%;" :disabled="true"></el-input>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="12">
+                            <el-col :span="8">
                                 <el-form-item label="协助费用" class="form-label">
                                     <el-input v-model="draw.assistCash" style="width: 100%;"
                                               :disabled="true"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="备注" class="form-label">
+                                    <el-input type="textarea"  rows="2" v-model="draw.taxAmount" style="width: 100%;" :disabled="true"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -207,6 +220,9 @@
                 <el-form-item label="收款人" style="width: 80%;">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
+                <el-form-item label="协助金额" style="width: 80%;">
+                    <el-input-number v-model="form.price" :min="0" :max="10000"></el-input-number>
+                </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="cashVisible = false">取 消</el-button>
@@ -221,19 +237,30 @@
                        :action="123"
                        :show-file-list="false"
                        :on-success="uploadImg"
-                       :before-upload="123">
+                       :before-upload="beforeUpload">
                 <img v-if="false" :src="123" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
         </el-dialog>
 
         <!-- 确认提示框 -->
-        <el-dialog title="确认" :visible.sync="confirmVisible" width="300px" center>
+        <el-dialog title="确认" :visible.sync="confirmVisible" width="20%">
+            <el-form :model="params" ref="form"  label-width="80px">
+                <el-form-item label="扣税费用" >
+                    <el-input-number v-model="form.qwe" :min="0" :max="2000"></el-input-number>
+                </el-form-item>
+                <el-form-item label="协助费用" >
+                    <el-input-number v-model="form.qwe" :min="0" :max="2000"></el-input-number>
+                </el-form-item>
+                <el-form-item label="备注" >
+                    <el-input type="textarea" rows="3" v-model="form.desc"></el-input>
+                </el-form-item>
+            </el-form>
             <div class="del-dialog-cnt">此幅画稿是否收完款项，确定？</div>
-            <span slot="footer" class="dialog-footer">
+            <div slot="footer" class="dialog-footer">
                 <el-button @click="confirmVisible = false">取 消</el-button>
-                <el-button type="primary" @click="deleteRow">确 定</el-button>
-            </span>
+                <el-button type="primary" @click="saveEdit()">确 定</el-button>
+            </div>
         </el-dialog>
 
         <!-- 删除提示框 -->
@@ -266,6 +293,7 @@
         name: 'basetable',
         data() {
             return {
+                params:{},
                 dataForm: {
                     drawName: null,
                     drawType: null,
@@ -358,8 +386,11 @@
                 var param = this.dataForm;
                 param.current = pageNum || 1;
                 param.size = pageSize || this.pageData.pageSize;
-                param.beginTime = this.dataForm.dataValue[0];
-                param.endTime = this.dataForm.dataValue[1];
+                //判断是否选择日期
+                if(Array.isArray(this.dataForm.dataValue) && this.dataForm.dataValue.length != 0){
+                    param.beginTime = this.dataForm.dataValue[0];
+                    param.endTime = this.dataForm.dataValue[1];
+                }
                 drawApi.selectListByPage(param).then(data => {
 
                     if (data && data.code == 0) {
@@ -372,6 +403,13 @@
                     this.pageData.pageNum = param.current;
                     this.pageData.pageSize = param.size;
                 });
+            },
+            resetQuery() {
+                this.dataForm.dataValue = [];
+                this.dataForm = {};
+                this.dataForm.min = 0;
+                this.dataForm.max = 0;
+                this.query();
             },
             // 分页导航
             handleCurrentChange(val) {
@@ -420,13 +458,11 @@
 
                 return sums;
             },
-            resetQuery() {
-                this.dataForm = {};
-                this.query();
-            },
             showBigImg(url) {
-                this.showVisible = true
-                this.picUrl = url
+                if(url != null){
+                    this.showVisible = true
+                    this.picUrl = url
+                }
             },
 
             dataFormatter(row, column) {
@@ -451,7 +487,16 @@
                     return "收完款";
                 }
             },
-
+            beforeUpload(file){
+                const isJPG = file.type === 'image/jpeg';
+                const jsPng = file.type === 'image/png';
+                if (!isJPG && !jsPng) {
+                    this.$message.error('上传图片只能是 JPG/PNG 格式!');
+                    return false;
+                }else{
+                    return true;
+                }
+            },
             filterTag(value, row) {
                 return row.tag === value;
             },
@@ -483,8 +528,24 @@
                 this.idx = index;
                 this.delVisible = true;
             },
-            uploadImg() {
+            uploadImg(res, file) {
+                if (res.status == 1) {
+                    this.foodForm.image_path = res.image_path;
+                }else{
+                    this.$message.error('上传图片失败！');
+                }
+            },
+            beforeImgUpload(file) {
+                const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png');
+                const isLt2M = file.size / 1024 / 1024 < 2;
 
+                if (!isRightType) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isRightType && isLt2M;
             },
             //添加画稿
             add() {
