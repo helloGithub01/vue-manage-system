@@ -49,9 +49,14 @@
                         title: '画稿表格'
                     },
                     {
-                        icon: 'el-icon-lx-cascades',
-                        index: 'basDic',
-                        title: '数据字典'
+                        icon: 'el-icon-lx-people',
+                        index: 'customer',
+                        title: '客户信息'
+                    },
+                    {
+                        icon: 'el-icon-lx-pic',
+                        index: 'picture',
+                        title: '画稿图片'
                     },
                     {
                         icon: 'el-icon-lx-copy',

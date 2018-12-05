@@ -86,10 +86,16 @@ export default new Router({
                     meta: { title: '403' }
                 },
                 {
-                    // 数据字典
-                    path: '/basDic',
-                    component: resolve => require(['../components/page/BaseData/BaseDic.vue'], resolve),
-                    meta: { title: '数据字典'}
+                    // 客户信息
+                    path: '/customer',
+                    component: resolve => require(['../components/page/BaseData/customer.vue'], resolve),
+                    meta: { title: '客户信息'}
+                },
+                {
+                    // 画稿图片
+                    path: '/picture',
+                    component: resolve => require(['../components/page/BaseData/picture.vue'], resolve),
+                    meta: { title: '画稿图片'}
                 },
             ]
         },

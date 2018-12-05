@@ -14,22 +14,31 @@ export default {
      * 新增
      * @param 实体对象
      */
-    addDriver(params) {
-        return Vue.prototype.global.methodPost(url + '/addDriver', params);
+    addBusinessDraw(params) {
+        return Vue.prototype.global.methodPost(url + '/save', params);
     },
+
+    /**
+     * 上传画稿
+     * @param 实体对象
+     */
+    uploadImg(drawId) {
+        return Vue.prototype.global.SERVER_ADDRESS + url+"/upload?drawId=" + drawId;
+    },
+
     /**
      * 更新
      * @param 实体对象
      */
-    updateDriver(params) {
-        return Vue.prototype.global.methodPost(url + '/updateDriver', params);
+    updateBusinessDraw(params) {
+        return Vue.prototype.global.methodPost(url + '/update', params);
     },
     /**
      * 删除
      * @param 实体对象
      */
-    deleteDriver(params) {
-        return Vue.prototype.global.methodPost(url + '/deleteDriver', params);
+    deleteBusinessDraw(params) {
+        return Vue.prototype.global.methodPost(url + '/delete', params);
     },
 
 }

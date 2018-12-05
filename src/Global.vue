@@ -15,7 +15,7 @@
     const SERVER_ADDRESS = "http://"+HOST+"/renren-fast";  //本地环境
     const SERVER_URL = "http://localhost:9080/uias_user";  //本地环境地址
     const TOKEN = "token";
-    const UPLOAD_IMG_ACCESS_URL="http://"+HOST+"/upload/img/";//上传图片访问url
+    const UPLOAD_IMG_ACCESS_URL="http://"+HOST+"/renren-fast/sys/oss/upload";//上传图片访问url
 
     //vue对message组件扩展
     Vue.$message = Message;

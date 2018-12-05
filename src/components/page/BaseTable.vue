@@ -199,53 +199,54 @@
 
         <!-- 收款弹出框 -->
         <el-dialog title="收款记录" :visible.sync="cashVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px">
-                <el-form-item label="收款日期">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd"
+            <el-form ref="cashForm" :model="cashForm" :rules="cashRule" label-width="80px">
+                <el-form-item label="收款日期" prop="cashDate">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="cashForm.cashDate" value-format="yyyy-MM-dd"
                                     style="width: 80%;"></el-date-picker>
                 </el-form-item>
-                <el-form-item label="收款方式">
-                    <el-select v-model="value" placeholder="请选择" style="width: 80%;">
+                <el-form-item label="收款方式" prop="cashType">
+                    <el-select v-model="cashForm.cashType" placeholder="请选择" style="width: 80%;">
                         <el-option
-                            v-for="item in cashType"
+                            v-for="item in cashTypeList"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="收款金额" style="width: 80%;">
-                    <el-input-number v-model="form.price" :min="0" :max="10000"></el-input-number>
+                <el-form-item label="收款金额" style="width: 80%;" prop="getCash">
+                    <el-input-number v-model="cashForm.getCash" :min="0" :max="10000"></el-input-number>
                 </el-form-item>
-                <el-form-item label="收款人" style="width: 80%;">
-                    <el-input v-model="form.name"></el-input>
+                <el-form-item label="收款人" style="width: 80%;" prop="cashUser">
+                    <el-input v-model="cashForm.cashUser"></el-input>
                 </el-form-item>
                 <el-form-item label="协助金额" style="width: 80%;">
-                    <el-input-number v-model="form.price" :min="0" :max="10000"></el-input-number>
+                    <el-input-number v-model="cashForm.assistCash" :min="0" :max="10000"></el-input-number>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="cashVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
+                <el-button type="primary" @click="saveCashRecord">确 定</el-button>
             </span>
         </el-dialog>
 
         <!--上传弹框-->
-        <el-dialog title="上传画稿" :visible.sync="uploadVisible" width="30%">
+        <el-dialog title="上传画稿" :visible.sync="uploadVisible" width="30%" @close="closeUpload">
             <el-upload align="center"
                        class="avatar-uploader"
-                       :action="123"
+                       :headers="token"
+                       :action="uploadUrl"
                        :show-file-list="false"
                        :on-success="uploadImg"
                        :before-upload="beforeUpload">
-                <img v-if="false" :src="123" class="avatar">
+                <img v-if="uploadImgUrl" :src="uploadImgUrl" class="avatar img">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
         </el-dialog>
 
         <!-- 确认提示框 -->
         <el-dialog title="确认" :visible.sync="confirmVisible" width="20%">
-            <el-form :model="params" ref="form"  label-width="80px">
+            <el-form :model="form" ref="form"  label-width="80px">
                 <el-form-item label="扣税费用" >
                     <el-input-number v-model="form.qwe" :min="0" :max="2000"></el-input-number>
                 </el-form-item>
@@ -288,6 +289,7 @@
     import drawApi from '../../api/business/draw';
     import pagination from '../../components/common/pagination.vue';
     import moment from 'moment';
+    import Vue from 'vue'
 
     export default {
         name: 'basetable',
@@ -304,18 +306,26 @@
                     dataValue: [],
                     isMulti: null
                 },
+                token: {
+                    token: sessionStorage.getItem('token'),
+                },
+                uploadUrl:Vue.prototype.global.SERVER_ADDRESS +'/business/draw/upload?drawId=' + this.drawId,
                 activeName: 'first',
                 url: './static/vuetable.json',
-                picUrl: null,
+                drawId:null,
+                picUrl: null,    //点击图片预览url
+                uploadImgUrl:null,  //上传图片回显的url
                 showVisible: false,
                 pageData: {
                     pageNum: 1,
                     pageSize: 10,
                     total: 0
                 },
-                tableData: [],
-                cashDatas: [],
-                cashType: [{
+                tableData: [],   //画稿列表
+                cashDatas: [],   //收款明细
+                cashForm:{},    //增加画稿收款记录
+                form:{},   //画稿确认
+                cashTypeList: [{
                     value: "XJ",
                     label: "现金"
                 }, {
@@ -340,12 +350,23 @@
                 uploadVisible: false,
                 confirmVisible: false,
                 delVisible: false,
-                form: {
-                    name: '',
-                    date: '',
-                    address: ''
+                idx: -1,
+
+                //定义校验规则
+                cashRule: {
+                    cashDate: [
+                        {required: true, message: '请输入收款日期', trigger: 'change'}
+                    ],
+                    cashType: [
+                        {required: true, message: '请选择收款方式', trigger: 'change'}
+                    ],
+                    getCash: [
+                        {type:'number',required: true, message: '必须是数字',trigger: 'blur'}
+                    ],
+                    cashUser: [
+                        {required: true, message: '请输入收款人', trigger: 'blur'}
+                    ]
                 },
-                idx: -1
             }
         },
         components: {
@@ -353,6 +374,12 @@
         },
         created() {
             this.query();
+        },
+        watch: {
+            //普通的watch监听
+            drawId(val, oldVal) {
+                console.log("a: " + val)
+            }
         },
         computed: {
             data() {
@@ -411,6 +438,7 @@
                 this.dataForm.max = 0;
                 this.query();
             },
+
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
@@ -504,11 +532,59 @@
             searchCash(index, row) {
 
             },
+
+            //画稿上传
+            handleUpload(index, row) {
+                this.drawId = row.id;
+                this.uploadUrl = Vue.prototype.global.SERVER_ADDRESS +'/business/draw/upload?drawId=' + this.drawId,
+                this.uploadVisible = true;
+            },
+            //上传成功
+            uploadImg(res, file) {
+                if (res.code == 0) {
+                    this.$message.success(res.msg);
+                    this.uploadImgUrl = res.url;
+                    //重新加载表格
+                    this.query();
+                }else{
+                    this.$message.error(res.msg);
+                }
+            },
+            //画稿上传之前预判断
+            beforeImgUpload(file) {
+                const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png');
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isRightType) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isRightType && isLt2M;
+            },
+            //关闭上传窗口
+            closeUpload(){
+                this.uploadImgUrl = null;
+            },
+
+            //收款弹窗
             handleCash(index, row) {
                 this.cashVisible = true;
             },
-            handleUpload(index, row) {
-                this.uploadVisible = true;
+            //新增收款记录
+            saveCashRecord(){
+                this.$refs.cashForm.validate((valid) => {
+                    if (valid) {
+                        drawApi.addBusinessDraw(this.form).then(res => {
+                            if (res && res.code == 0) {
+                                this.$message.success(res.msg);
+                                this.$refs.form.resetFields();
+                                this.form = {}
+                            }
+                        })
+                    }
+                })
             },
             //确认画稿完结
             confirm(index, row) {
@@ -528,25 +604,7 @@
                 this.idx = index;
                 this.delVisible = true;
             },
-            uploadImg(res, file) {
-                if (res.status == 1) {
-                    this.foodForm.image_path = res.image_path;
-                }else{
-                    this.$message.error('上传图片失败！');
-                }
-            },
-            beforeImgUpload(file) {
-                const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png');
-                const isLt2M = file.size / 1024 / 1024 < 2;
 
-                if (!isRightType) {
-                    this.$message.error('上传头像图片只能是 JPG 格式!');
-                }
-                if (!isLt2M) {
-                    this.$message.error('上传头像图片大小不能超过 2MB!');
-                }
-                return isRightType && isLt2M;
-            },
             //添加画稿
             add() {
                 this.$router.push('/form');
@@ -608,6 +666,11 @@
 
     .red {
         color: #ff0000;
+    }
+
+    .img{
+        width:inherit;
+        height:inherit;
     }
 
     .img_show {
