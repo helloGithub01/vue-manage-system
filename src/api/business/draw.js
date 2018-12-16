@@ -27,18 +27,27 @@ export default {
     },
 
     /**
-     * 更新
+     * 增加画稿收款记录
      * @param 实体对象
      */
-    updateBusinessDraw(params) {
-        return Vue.prototype.global.methodPost(url + '/update', params);
+    addCashRecord(params) {
+        return Vue.prototype.global.methodPost(url + '/addCashRecord', params);
     },
+
     /**
-     * 删除
+     * 查看画稿收款记录
      * @param 实体对象
      */
-    deleteBusinessDraw(params) {
-        return Vue.prototype.global.methodPost(url + '/delete', params);
+    queryDrawCash(params) {
+        return Vue.prototype.global.methodPost(url + '/queryDrawCash', params);
+    },
+
+    /**
+     * 确认画稿收款完结
+     * @param 实体对象
+     */
+    completeDraw(params) {
+        return Vue.prototype.global.methodPost(url + '/complete', params);
     },
 
 }

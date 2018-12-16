@@ -49,19 +49,24 @@
                         title: '画稿表格'
                     },
                     {
-                        icon: 'el-icon-lx-people',
-                        index: 'customer',
-                        title: '客户信息'
-                    },
-                    {
                         icon: 'el-icon-lx-pic',
                         index: 'picture',
                         title: '画稿图片'
                     },
+                    // {
+                    //     icon: 'el-icon-lx-favor',
+                    //     index: 'echarts',
+                    //     title: '画稿曲线'
+                    // },
+                    // {
+                    //     icon: 'el-icon-lx-rankfill',
+                    //     index: 'charts',
+                    //     title: 'schart图表'
+                    // },
                     {
                         icon: 'el-icon-lx-copy',
                         index: 'tabs',
-                        title: 'tab选项卡'
+                        title: '消息选项卡'
                     },
                     {
                         icon: 'el-icon-lx-calendar',
@@ -98,14 +103,9 @@
                         title: '自定义图标'
                     },
                     {
-                        icon: 'el-icon-lx-favor',
-                        index: 'charts',
-                        title: 'schart图表'
-                    },
-                    {
                         icon: 'el-icon-rank',
                         index: 'drag',
-                        title: '拖拽列表'
+                        title: '事项列表'
                     },
                     {
                         icon: 'el-icon-lx-warn',

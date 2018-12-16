@@ -12,7 +12,7 @@
                         <el-col :span="6">
                             <el-form-item label="画稿名称">
                                 <el-input v-model="dataForm.drawName" placeholder="筛选关键词"
-                                          class="handle-input mr10" style="width:280px"></el-input>
+                                          class="handle-input mr10" style="width:250px"></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="4">
@@ -83,14 +83,30 @@
                 <el-button type="warning" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
 
                 <el-button type="success" icon="add" class="handle-del mr10" @click="add">新增</el-button>
+
+                <div class="header-right">
+                    <el-dropdown class="user-name" trigger="click" @command="handleCommand">
+                    <span class="el-dropdown-link">
+                        图表<i class="el-icon-caret-bottom"></i>
+                    </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <!--<a href="http://blog.gdfengshuo.com/about/" target="_blank">-->
+                                <el-dropdown-item @click.native="drawSchart">schart图标</el-dropdown-item>
+                            <!--</a>-->
+                            <!--<a href="https://github.com/lin-xin/vue-manage-system" target="_blank">-->
+                                <el-dropdown-item @click.native="drawCurve">画稿曲线</el-dropdown-item>
+                            <!--</a>-->
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
             </div>
+
             <el-table :data="tableData" border class="table" ref="multipleTable" highlight-current-row
-                      @selection-change="handleSelectionChange"
-                      :summary-method="getSummaries"
+                      @selection-change="handleSelectionChange" :row-class-name="tableRowClassName"
+                      :summary-method="getSummaries" @row-click="showRowItem"
                       show-summary>
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="orderDate" label="接单日期" align="center" sortable width="120"
-                                 :formatter="dataFormatter">
+                <el-table-column prop="orderDate" label="接单日期" align="center" sortable width="130">
                     <template slot-scope="scope">
                         <i class="el-icon-lx-time" style="font-size: 15px;color: #2b33ff">{{dataFormatter1(scope.row.orderDate) }}</i>
                     </template>
@@ -110,7 +126,7 @@
                              @click="showBigImg(scope.row.picUrl)">
                     </template>
                 </el-table-column>
-                <el-table-column prop="drawAmount" label="画稿金额$(元)" sortable align="center" width="140">
+                <el-table-column prop="drawAmount" label="画稿金额(元)" sortable align="center" width="140">
                     <template slot-scope="scope">
                         <i class="el-icon-lx-redpacket_fill" style="font-size: 15px;color: #ff5900">{{scope.row.drawAmount | rounding}}</i>
                     </template>
@@ -126,14 +142,15 @@
                 </el-table-column>
                 <el-table-column prop="confirmDate" label="完结时间" align="center" width="180"></el-table-column>
                 <el-table-column prop="createUser" label="接单人" align="center" width="120"></el-table-column>
-                <el-table-column label="操作" width="180" align="center">
+                <el-table-column label="操作" width="250" align="center">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-goods" @click="handleCash(scope.$index, scope.row)">收款
                         </el-button>
+                        <el-button type="text" icon="el-icon-lx-tag" @click="confirm(scope.$index, scope.row)">确认
+                        </el-button>
                         <el-button type="text" icon="el-icon-upload" @click="handleUpload(scope.$index, scope.row)">上传
                         </el-button>
-                        <!--<el-button type="text" icon="el-icon-search" @click="searchCash(scope.$index, scope.row)">查看</el-button>-->
-                        <el-button type="text" icon="el-icon-lx-tag" @click="confirm(scope.$index, scope.row)">确认
+                        <el-button type="text" icon="el-icon-lx-punch" @click="addCashHandle(scope.$index, scope.row)">补款
                         </el-button>
                     </template>
                 </el-table-column>
@@ -148,11 +165,12 @@
                 <el-tab-pane label="收款明细" name="first">
                     <el-table :data="cashDatas" tooltip-effect="dark" border style="width: 80%">
                         <el-table-column type="index" label="序号" align="center"></el-table-column>
-                        <el-table-column prop="vehicleNo" label="收款日期" align="center"></el-table-column>
-                        <el-table-column prop="driverName" label="收款方式" align="center"></el-table-column>
-                        <el-table-column prop="materialCode" label="收款人" align="center"></el-table-column>
-                        <el-table-column prop="materialName" label="收款金额" align="center"></el-table-column>
-                        <el-table-column prop="materialName" label="协助金额" align="center"></el-table-column>
+                        <el-table-column prop="cashDate" label="收款日期" align="center" :formatter="dataFormatter"></el-table-column>
+                        <el-table-column prop="cashType" label="收款方式" align="center" :formatter="cashTypeFormatter"></el-table-column>
+                        <el-table-column prop="cashUser" label="收款人" align="center"></el-table-column>
+                        <el-table-column prop="getCash" label="收款金额" align="center"></el-table-column>
+                        <el-table-column prop="assistCash" label="协助金额" align="center"></el-table-column>
+                        <el-table-column prop="noGetCash" label="待收金额" align="center"></el-table-column>
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="画稿详情" name="second">
@@ -165,12 +183,19 @@
                             </el-col>
                             <el-col :span="8">
                                 <el-form-item label="是否多人" class="form-label">
-                                    <el-input v-model="draw.deposit" style="width: 100%;" :disabled="true"></el-input>
+                                    <el-select v-model="draw.isMulti" :disabled="true">
+                                        <el-option
+                                            v-for="item in isMultiList"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                        </el-option>
+                                    </el-select>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="8">
                                 <el-form-item label="用时天数" class="form-label">
-                                    <el-input v-model="draw.deposit" style="width: 100%;" :disabled="true"></el-input>
+                                    <el-input v-model="draw.consumeDays" style="width: 100%;" :disabled="true"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -188,7 +213,19 @@
                             </el-col>
                             <el-col :span="8">
                                 <el-form-item label="备注" class="form-label">
-                                    <el-input type="textarea"  rows="2" v-model="draw.taxAmount" style="width: 100%;" :disabled="true"></el-input>
+                                    <el-input type="textarea"  rows="2" v-model="draw.remark" style="width: 100%;" :disabled="true"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="15">
+                            <el-col :span="8">
+                                <el-form-item label="补加金额" class="form-label">
+                                    <el-input v-model="draw.addAmount" style="width: 100%;" :disabled="true"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="待收金额" class="form-label">
+                                    <el-input v-model="draw.leaveAmount" style="width: 100%;" :disabled="true"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -201,7 +238,7 @@
         <el-dialog title="收款记录" :visible.sync="cashVisible" width="30%">
             <el-form ref="cashForm" :model="cashForm" :rules="cashRule" label-width="80px">
                 <el-form-item label="收款日期" prop="cashDate">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="cashForm.cashDate" value-format="yyyy-MM-dd"
+                    <el-date-picker type="date" placeholder="选择日期" v-model="cashForm.cashDate" value-format="yyyy-MM-dd HH:mm:ss"
                                     style="width: 80%;"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="收款方式" prop="cashType">
@@ -216,9 +253,6 @@
                 </el-form-item>
                 <el-form-item label="收款金额" style="width: 80%;" prop="getCash">
                     <el-input-number v-model="cashForm.getCash" :min="0" :max="10000"></el-input-number>
-                </el-form-item>
-                <el-form-item label="收款人" style="width: 80%;" prop="cashUser">
-                    <el-input v-model="cashForm.cashUser"></el-input>
                 </el-form-item>
                 <el-form-item label="协助金额" style="width: 80%;">
                     <el-input-number v-model="cashForm.assistCash" :min="0" :max="10000"></el-input-number>
@@ -248,19 +282,16 @@
         <el-dialog title="确认" :visible.sync="confirmVisible" width="20%">
             <el-form :model="form" ref="form"  label-width="80px">
                 <el-form-item label="扣税费用" >
-                    <el-input-number v-model="form.qwe" :min="0" :max="2000"></el-input-number>
-                </el-form-item>
-                <el-form-item label="协助费用" >
-                    <el-input-number v-model="form.qwe" :min="0" :max="2000"></el-input-number>
+                    <el-input-number v-model="form.taxAmount" :min="0" :max="2000"></el-input-number>
                 </el-form-item>
                 <el-form-item label="备注" >
-                    <el-input type="textarea" rows="3" v-model="form.desc"></el-input>
+                    <el-input type="textarea" rows="3" v-model="form.remark"></el-input>
                 </el-form-item>
             </el-form>
             <div class="del-dialog-cnt">此幅画稿是否收完款项，确定？</div>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="confirmVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit()">确 定</el-button>
+                <el-button type="primary" @click="complete()">确 定</el-button>
             </div>
         </el-dialog>
 
@@ -280,6 +311,25 @@
             <div>
                 <img :src="picUrl" width="100%"/>
             </div>
+        </el-dialog>
+
+        <!--查看画稿统计需要输入账号-->
+        <el-dialog
+            title="输入口令" width="450px"
+            :close-on-click-modal="true"
+            :visible.sync="passwdVisible">
+            <el-form  :model="account" label-width="80px">
+                <el-form-item label="问题" style="width: 80%;" prop="cashUser">
+                 你是谁？
+                </el-form-item>
+                <el-form-item label="回答" style="width: 80%;" prop="cashUser">
+                    <el-input v-model="account.password"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="passwdVisible = false">取 消</el-button>
+                <el-button type="primary" @click="confirmPasswd">确 定</el-button>
+            </span>
         </el-dialog>
 
     </div>
@@ -338,7 +388,14 @@
                     value: "YHK",
                     label: "银行卡"
                 }],
-                draw: {},
+                isMultiList: [{
+                    value: 0,
+                    label: "单人"
+                }, {
+                    value: 1,
+                    label: "多人"
+                }],
+                draw: {},  //画稿详情
                 cur_page: 1,
                 multipleSelection: [],
                 select_cate: '',
@@ -351,6 +408,12 @@
                 confirmVisible: false,
                 delVisible: false,
                 idx: -1,
+                account:{
+                    schart:false,
+                    curve:false,
+                    password:null
+                },
+                passwdVisible:false,
 
                 //定义校验规则
                 cashRule: {
@@ -408,6 +471,22 @@
             }
         },
         methods: {
+            handleCommand(command) {
+                if(command == 'loginout'){
+                    localStorage.removeItem('ms_username')
+                    this.$router.push('/login');
+                }
+            },
+            tableRowClassName({row, rowIndex}) {
+                if (row.state === 0) {
+                    return 'info-row';
+                } else if (row.state === 1) {
+                    return 'warning-row';
+                } else if(row.state === 2){
+                    return 'success-row';
+                }
+                return '';
+            },
             query(pageNum, pageSize) {
 
                 var param = this.dataForm;
@@ -438,25 +517,6 @@
                 this.dataForm.max = 0;
                 this.query();
             },
-
-            // 分页导航
-            handleCurrentChange(val) {
-                this.cur_page = val;
-                // this.getData();
-            },
-            // 获取 easy-mock 的模拟数据
-            getData() {
-                // 开发环境使用 easy-mock 数据，正式环境使用 json 文件
-                if (process.env.NODE_ENV === 'development') {
-                    this.url = '/ms/table/list';
-                }
-                ;
-                this.$axios.post(this.url, {
-                    page: this.cur_page
-                }).then((res) => {
-                    this.tableData = res.data.list;
-                })
-            },
             getSummaries(param) {
                 const {columns, data} = param;
                 const sums = [];
@@ -483,8 +543,19 @@
                         }
                     }
                 });
-
                 return sums;
+            },
+            showRowItem(row, event, column){
+                //展示画稿明细
+                this.draw = row;
+                var param = {"drawId":row.id};
+                drawApi.queryDrawCash(param).then(data =>{
+                    if (data && data.code == 0) {
+                        this.cashDatas = data.list;
+                    }else{
+                        this.$message.error("查询收款记录失败!")
+                    }
+                })
             },
             showBigImg(url) {
                 if(url != null){
@@ -494,7 +565,7 @@
             },
 
             dataFormatter(row, column) {
-                return moment(row.orderDate).format("YYYY-MM-DD");
+                return moment(row.cashDate).format("YYYY-MM-DD");
             },
             dataFormatter1(value) {
                 return moment(value).format("YYYY-MM-DD");
@@ -515,24 +586,35 @@
                     return "收完款";
                 }
             },
-            beforeUpload(file){
-                const isJPG = file.type === 'image/jpeg';
-                const jsPng = file.type === 'image/png';
-                if (!isJPG && !jsPng) {
-                    this.$message.error('上传图片只能是 JPG/PNG 格式!');
-                    return false;
-                }else{
-                    return true;
+            cashTypeFormatter(row, column){
+                switch(row.cashType){
+                    case "XJ":
+                        return "现金";
+                    break;
+                    case "WX":
+                        return "微信";
+                    break;
+                    case "ZFB":
+                        return "支付宝";
+                    break;
+                    case "YHK":
+                        return "银行卡";
+                    break;
                 }
             },
-            filterTag(value, row) {
-                return row.tag === value;
+            beforeUpload(file){
+                const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png');
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isRightType) {
+                    this.$message.error('上传图片只能是 PNG,JPEG 格式!');
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                    return false;
+                }
+                return true;
             },
-            //查看收款明细
-            searchCash(index, row) {
-
-            },
-
             //画稿上传
             handleUpload(index, row) {
                 this.drawId = row.id;
@@ -544,6 +626,7 @@
                 if (res.code == 0) {
                     this.$message.success(res.msg);
                     this.uploadImgUrl = res.url;
+                    this.drawId = null;
                     //重新加载表格
                     this.query();
                 }else{
@@ -570,25 +653,90 @@
 
             //收款弹窗
             handleCash(index, row) {
+
+                //判断是否已经收完款
+                if(row.state == 2){
+                    this.$message.info("此幅画稿款项已经收完!")
+                    return;
+                }
+                this.drawId = row.id;
                 this.cashVisible = true;
             },
             //新增收款记录
             saveCashRecord(){
                 this.$refs.cashForm.validate((valid) => {
                     if (valid) {
-                        drawApi.addBusinessDraw(this.form).then(res => {
+                        this.cashForm.drawId = this.drawId;
+                        drawApi.addCashRecord(this.cashForm).then(res => {
                             if (res && res.code == 0) {
                                 this.$message.success(res.msg);
-                                this.$refs.form.resetFields();
-                                this.form = {}
+                                this.$refs.cashForm.resetFields();
+                                this.cashForm = {}
+                                this.cashVisible = false;
+                                this.query();
+                            }else{
+                                this.$message.error(res.msg);
                             }
                         })
                     }
                 })
             },
-            //确认画稿完结
+            //确认画稿弹窗
             confirm(index, row) {
+
+                //判断是否已经收完款
+                if(row.state == 2){
+                    this.$message.info("此幅画稿款项已经收完!")
+                    return;
+                }
+                this.drawId = row.id;
                 this.confirmVisible = true;
+            },
+            //确认画稿完结
+            complete() {
+                this.$refs.form.validate((valid) => {
+                    if (valid) {
+                        this.form.drawId = this.drawId;
+                        drawApi.completeDraw(this.form).then(res => {
+                            if (res && res.code == 0) {
+                                this.$message.success(res.msg);
+                                this.$refs.form.resetFields();
+                                this.form = {};
+                                this.confirmVisible = false;
+                                this.query();
+                            }else{
+                                this.$message.error(res.msg);
+                            }
+                        })
+                    }
+                })
+            },
+            addCashHandle(index,row){
+
+            },
+            drawSchart(){
+                this.account.schart = true;
+                this.passwdVisible = true;
+            },
+            drawCurve(){
+                this.account.curve = true;
+                this.passwdVisible = true;
+            },
+
+
+            confirmPasswd(){
+                if(this.account.password == "奔波儿灞"){
+                    this.account.password = null;
+                    this.passwdVisible = false;
+                    if(this.account.schart){
+                        this.$router.push("/echarts");
+                    }
+                    if(this.account.curve){
+                        this.$router.push("/charts");
+                    }
+                }else{
+                    this.$message.error('答案错误!');
+                }
             },
             handleEdit(index, row) {
                 this.idx = index;
@@ -684,5 +832,27 @@
         height: 120px;
         line-height: 120px;
         text-align: center;
+    }
+
+    .el-table .info-row {
+        background: #d8c8fd;
+    }
+
+    .el-table .warning-row {
+        background: #fdc650;
+    }
+
+    .el-table .success-row {
+        background: #4b7ff9;
+    }
+
+    .header-right{
+        float: right;
+        padding-right: 50px;
+    }
+
+    .el-dropdown-link{
+        color: #7dbaff;
+        cursor: pointer;
     }
 </style>

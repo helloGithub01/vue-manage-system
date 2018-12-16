@@ -11,7 +11,7 @@
                         </div>
                     </div>
                     <div class="user-info-list">上次登录时间：<span>2018-01-01</span></div>
-                    <div class="user-info-list">上次登录地点：<span>东莞</span></div>
+                    <div class="user-info-list">上次登录地点：<span>成都</span></div>
                 </el-card>
                 <el-card shadow="hover" style="height:252px;">
                     <div slot="header" class="clearfix">
@@ -34,8 +34,8 @@
                             <div class="grid-content grid-con-1">
                                 <i class="el-icon-lx-people grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">1234</div>
-                                    <div>用户访问量</div>
+                                    <div class="grid-num">5</div>
+                                    <div>用户人数</div>
                                 </div>
                             </div>
                         </el-card>
@@ -43,10 +43,10 @@
                     <el-col :span="8">
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
                             <div class="grid-content grid-con-2">
-                                <i class="el-icon-lx-notice grid-con-icon"></i>
+                                <i class="el-icon-lx-mail grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">321</div>
-                                    <div>系统消息</div>
+                                    <div class="grid-num">12</div>
+                                    <div>已发邮件</div>
                                 </div>
                             </div>
                         </el-card>
@@ -54,10 +54,10 @@
                     <el-col :span="8">
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
                             <div class="grid-content grid-con-3">
-                                <i class="el-icon-lx-goods grid-con-icon"></i>
+                                <i class="el-icon-lx-picfill grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">5000</div>
-                                    <div>数量</div>
+                                    <div class="grid-num">35</div>
+                                    <div>画稿图片总数</div>
                                 </div>
                             </div>
                         </el-card>
@@ -65,26 +65,43 @@
                 </el-row>
                 <el-card shadow="hover" style="height:403px;">
                     <div slot="header" class="clearfix">
-                        <span>待办事项</span>
-                        <el-button style="float: right; padding: 3px 0" type="text">添加</el-button>
+                        <span>待收金额画稿</span>
+                        <el-button style="float: right; padding: 3px 0" type="text">倒序</el-button>
                     </div>
-                    <el-table :data="todoList" :show-header="false" height="304" style="width: 100%;font-size:14px;">
-                        <el-table-column width="40">
+                    <el-table :data="itemList" :show-header="true" height="304" style="width: 100%;font-size:14px;">
+
+                        <el-table-column type="index" label="序号" align="center"></el-table-column>
+                        <el-table-column prop="drawName" label="画稿名称" align="center" ></el-table-column>
+                        <el-table-column prop="source" label="画稿来源" align="center" ></el-table-column>
+                        <el-table-column prop="drawAmount" label="画稿金额" align="center"></el-table-column>
+                        <el-table-column label="状态" align="center">
                             <template slot-scope="scope">
-                                <el-checkbox v-model="scope.row.status"></el-checkbox>
+                                <el-tag v-if="scope.row.state == 0" type="info">{{ stateFormatter(scope.row.state) }}</el-tag>
+                                <el-tag v-else-if="scope.row.state == 1" type="warning">{{ stateFormatter(scope.row.state) }}
+                                </el-tag>
+                                <el-tag v-else="scope.row.state == 2" type="success">{{ stateFormatter(scope.row.state) }}
+                                </el-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column>
-                            <template slot-scope="scope">
-                                <div class="todo-item" :class="{'todo-item-del': scope.row.status}">{{scope.row.title}}</div>
-                            </template>
-                        </el-table-column>
-                        <el-table-column width="60">
-                            <template slot-scope="scope">
-                                <i class="el-icon-edit"></i>
-                                <i class="el-icon-delete"></i>
-                            </template>
-                        </el-table-column>
+                        <el-table-column prop="leaveAmount" label="待收金额" align="center"></el-table-column>
+
+
+                        <!--<el-table-column width="40">-->
+                            <!--<template slot-scope="scope">-->
+                                <!--<el-checkbox v-model="scope.row.status"></el-checkbox>-->
+                            <!--</template>-->
+                        <!--</el-table-column>-->
+                        <!--<el-table-column>-->
+                            <!--<template slot-scope="scope">-->
+                                <!--<div class="todo-item" :class="{'todo-item-del': scope.row.status}">{{scope.row.title}}</div>-->
+                            <!--</template>-->
+                        <!--</el-table-column>-->
+                        <!--<el-table-column width="60">-->
+                            <!--<template slot-scope="scope">-->
+                                <!--<i class="el-icon-edit"></i>-->
+                                <!--<i class="el-icon-delete"></i>-->
+                            <!--</template>-->
+                        <!--</el-table-column>-->
                     </el-table>
                 </el-card>
             </el-col>
@@ -92,12 +109,12 @@
         <el-row :gutter="20">
             <el-col :span="12">
                 <el-card shadow="hover">
-                    <schart ref="bar" class="schart" canvasId="bar" :data="data" type="bar" :options="options"></schart>
+                    <schart ref="bar" class="schart" canvasId="bar" :data="orderData" type="bar" :options="options"></schart>
                 </el-card>
             </el-col>
             <el-col :span="12">
                 <el-card shadow="hover">
-                    <schart ref="line" class="schart" canvasId="line" :data="data" type="line" :options="options2"></schart>
+                    <schart ref="line" class="schart" canvasId="line" :data="cashData" type="line" :options="options2"></schart>
                 </el-card>
             </el-col>
         </el-row>
@@ -107,11 +124,14 @@
 <script>
     import Schart from 'vue-schart';
     import bus from '../common/bus';
+    import statisApi from '@/api/dashBoard';
+
     export default {
         name: 'dashboard',
         data() {
             return {
                 name: localStorage.getItem('ms_username'),
+                itemList:[],
                 todoList: [{
                         title: '今天要修复100个bug',
                         status: false,
@@ -136,44 +156,20 @@
                         status: true,
                     }
                 ],
-                data: [{
-                        name: '2018/09/04',
-                        value: 1083
-                    },
-                    {
-                        name: '2018/09/05',
-                        value: 941
-                    },
-                    {
-                        name: '2018/09/06',
-                        value: 1139
-                    },
-                    {
-                        name: '2018/09/07',
-                        value: 816
-                    },
-                    {
-                        name: '2018/09/08',
-                        value: 327
-                    },
-                    {
-                        name: '2018/09/09',
-                        value: 228
-                    },
-                    {
-                        name: '2018/09/10',
-                        value: 1065
-                    }
-                ],
+                totalAmount:null,
+                noReceiveAmount:null,
+                receiveAmount:null,
+                orderData:[],
+                cashData:[],
                 options: {
-                    title: '最近七天每天的用户访问量',
+                    title: '最近商稿接单记录',
                     showValue: false,
                     fillColor: 'rgb(45, 140, 240)',
                     bottomPadding: 30,
                     topPadding: 30
                 },
                 options2: {
-                    title: '最近七天用户访问趋势',
+                    title: '最近商稿收款记录',
                     fillColor: '#FC6FA1',
                     axisColor: '#008ACD',
                     contentColor: '#EEEEEE',
@@ -192,6 +188,9 @@
             }
         },
         created(){
+            this.queryNoReceiveRecord();
+            this.queryOrderRecord();
+            this.queryOrderSize();
             this.handleListener();
             this.changeDate();
         },
@@ -203,6 +202,39 @@
             bus.$off('collapse', this.handleBus);
         },
         methods: {
+            stateFormatter(value) {
+                if (value == 0) {
+                    return "未收款";
+                } else if (value == 1) {
+                    return "部分收款";
+                } else {
+                    return "收完款";
+                }
+            },
+            queryNoReceiveRecord(){
+                statisApi.queryNoReceiveRecord().then(data =>{
+                    if (data && data.code == 0) {
+                        this.itemList = data.list;
+                    }
+                })
+            },
+            queryOrderRecord(){
+                statisApi.selectOrderRecord().then(data =>{
+                    if (data && data.code == 0) {
+                        this.orderData = data.list1;
+                        this.cashData = data.list2;
+                    }
+                })
+            },
+            queryOrderSize(){
+                statisApi.selectOrderAmounts().then(data =>{
+                    if (data && data.code == 0) {
+                        this.totalAmount = data.totalAmount;
+                        this.noReceiveAmount = data.noReceiveAmount;
+                        this.receiveAmount = data.receiveAmount;
+                    }
+                })
+            },
             changeDate(){
                 const now = new Date().getTime();
                 this.data.forEach((item, index) => {

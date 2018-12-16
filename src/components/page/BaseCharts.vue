@@ -7,52 +7,91 @@
         </div>
         <div class="container">
             <div class="plugins-tips">
-                vue-schart：vue.js封装sChart.js的图表组件。
-                访问地址：<a href="https://github.com/lin-xin/vue-schart" target="_blank">vue-schart</a>
+                <el-row :gutter="20" class="mgb20">
+                    <el-col :span="8">
+                        <el-card shadow="hover" :body-style="{padding: '0px'}">
+                            <div class="grid-content grid-con-1">
+                                <i class="el-icon-lx-redpacket grid-con-icon"></i>
+                                <div class="grid-cont-right">
+                                    <div class="grid-num">{{totalAmount}}</div>
+                                    <div>画稿总金额</div>
+                                </div>
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-card shadow="hover" :body-style="{padding: '0px'}">
+                            <div class="grid-content grid-con-2">
+                                <i class="el-icon-lx-goodsfill grid-con-icon"></i>
+                                <div class="grid-cont-right">
+                                    <div class="grid-num">{{receiveAmount}}</div>
+                                    <div>已收金额</div>
+                                </div>
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-card shadow="hover" :body-style="{padding: '0px'}">
+                            <div class="grid-content grid-con-3">
+                                <i class="el-icon-lx-recharge grid-con-icon"></i>
+                                <div class="grid-cont-right">
+                                    <div class="grid-num">{{noReceiveAmount}}</div>
+                                    <div>未收金额</div>
+                                </div>
+                            </div>
+                        </el-card>
+                    </el-col>
+                </el-row>
             </div>
-            <div class="schart-box">
-                <div class="content-title">柱状图</div>
-                <schart class="schart" canvasId="bar" :data="data1" type="bar" :options="options1"></schart>
-            </div>
-            <div class="schart-box">
-            <div class="content-title">折线图</div>
-            <schart class="schart" canvasId="line" :data="data1" type="line" :options="options2"></schart>
-            </div>
-            <div class="schart-box">
-            <div class="content-title">饼状图</div>
-            <schart class="schart" canvasId="pie" :data="data2" type="pie" :options="options3"></schart>
-            </div>
-            <div class="schart-box">
-            <div class="content-title">环形图</div>
-            <schart class="schart" canvasId="ring" :data="data2" type="ring" :options="options4"></schart>
-            </div>
+            <!--<div class="schart-box">-->
+            <!--<div class="content-title">柱状图</div>-->
+            <!--<schart class="schart" canvasId="bar" :data="data1" type="bar" :options="options1"></schart>-->
+            <!--</div>-->
+            <!--<div class="schart-box">-->
+            <!--<div class="content-title">折线图</div>-->
+            <!--<schart class="schart" canvasId="line" :data="data1" type="line" :options="options2"></schart>-->
+            <!--</div>-->
+            <el-row :gutter="20" class="mgb20">
+                <el-col :span="12">
+                    <div class="schart-box">
+                        <div class="content-title">画稿饼状图</div>
+                        <schart class="schart" canvasId="pie" :data="data2" type="pie" :options="options3"></schart>
+                    </div>
+                </el-col>
+                <el-col :span="12">
+                    <div class="schart-box">
+                        <div class="content-title">画稿环形图</div>
+                        <schart class="schart" canvasId="ring" :data="data3" type="ring" :options="options4"></schart>
+                    </div>
+                </el-col>
+            </el-row>
         </div>
     </div>
 </template>
 
 <script>
     import Schart from 'vue-schart';
+    import echartsApi from '@/api/business/echarts';
+
     export default {
         name: 'basecharts',
         components: {
             Schart
         },
         data: () => ({
-            data1:[
-                {name:'2012',value:1141},
-                {name:'2013',value:1499},
-                {name:'2014',value:2260},
-                {name:'2015',value:1170},
-                {name:'2016',value:970},
-                {name:'2017',value:1450}
+            totalAmount: null,
+            receiveAmount: null,
+            noReceiveAmount: null,
+            data1: [
+                {name: '2012', value: 1141},
+                {name: '2013', value: 1499},
+                {name: '2014', value: 2260},
+                {name: '2015', value: 1170},
+                {name: '2016', value: 970},
+                {name: '2017', value: 1450}
             ],
-            data2 : [
-                {name:'短袖',value:1200},
-                {name:'休闲裤',value:1222},
-                {name:'连衣裙',value:1283},
-                {name:'外套',value:1314},
-                {name:'羽绒服',value:2314}
-            ],
+            data2: [],  //类型金额数
+            data3: [],  //来源金额数
             options1: {
                 title: '某商店近年营业总额',
                 autoWidth: true,   // 设置宽高自适应
@@ -70,40 +109,126 @@
                 contentColor: 'rgba(46,199,201,0.3)'
             },
             options3: {
-                title: '某商店各商品年度销量',
+                title: '不同画稿类型金额比',
                 bgColor: '#829dca',
                 titleColor: '#ffffff',
                 legendColor: '#ffffff',
                 radius: 120
             },
             options4: {
-                title: '某商店各商品年度销量',
+                title: '不同客户商画稿金额比',
                 bgColor: '#829daa',
                 titleColor: '#ffffff',
                 legendColor: '#ffffff',
                 radius: 120,
-                innerRadius:80
+                innerRadius: 80
             }
-        })
+        }),
+        methods:{
+            selectOrderAmountsFunc() {
+                echartsApi.selectOrderAmounts().then(data => {
+                    if (data && data.code == 0) {
+                        this.totalAmount = data.totalAmount;
+                        this.noReceiveAmount = data.noReceiveAmount;
+                        this.receiveAmount = data.receiveAmount;
+                    }
+                })
+            },
+            selectDrawTypeAmountFunc(){
+                echartsApi.selectDrawTypeAmount().then(data => {
+                    if (data && data.code == 0) {
+                        this.data2 = data.list;
+                    }
+                })
+            },
+            selectDrawSourceAmountFunc(){
+                echartsApi.selectDrawSourceAmount().then(data => {
+                    if (data && data.code == 0) {
+                        this.data3 = data.list;
+                    }
+                })
+            },
+        },
+        created:function () {
+
+            this.selectOrderAmountsFunc();
+            //不同类型金额比；
+            this.selectDrawTypeAmountFunc();
+            //不同客户金额比；
+            this.selectDrawSourceAmountFunc();
+        }
+
     }
 </script>
 
 <style scoped>
-.schart-box{
-    display: inline-block;
-    margin: 20px;
-}
-    .schart{
+    .schart-box {
+        display: inline-block;
+        margin: 20px;
+    }
+
+    .schart {
         width: 500px;
         height: 400px;
     }
-    .content-title{
+
+    .content-title {
         clear: both;
-        font-weight: 400;
+        font-weight: 500;
         line-height: 50px;
         margin: 10px 0;
         font-size: 22px;
         color: #1f2f3d;
     }
-    
+
+    .grid-con-1 .grid-con-icon {
+        background: rgb(45, 140, 240);
+    }
+
+    .grid-con-1 .grid-num {
+        color: rgb(45, 140, 240);
+    }
+
+    .grid-con-2 .grid-con-icon {
+        background: rgb(100, 213, 114);
+    }
+
+    .grid-con-2 .grid-num {
+        color: rgb(45, 140, 240);
+    }
+
+    .grid-con-3 .grid-con-icon {
+        background: rgb(242, 94, 67);
+    }
+
+    .grid-con-3 .grid-num {
+        color: rgb(242, 94, 67);
+    }
+
+    .grid-cont-right {
+        flex: 1;
+        text-align: center;
+        font-size: 14px;
+        color: #999;
+    }
+
+    .grid-con-icon {
+        font-size: 50px;
+        width: 100px;
+        height: 100px;
+        text-align: center;
+        line-height: 100px;
+        color: #fff;
+    }
+
+    .grid-num {
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    .grid-content {
+        display: flex;
+        align-items: center;
+        height: 100px;
+    }
 </style>
