@@ -71,9 +71,9 @@
                     <el-table :data="itemList" :show-header="true" height="304" style="width: 100%;font-size:14px;">
 
                         <el-table-column type="index" label="序号" align="center"></el-table-column>
+                        <el-table-column prop="dateStr" label="日期" align="center" ></el-table-column>
                         <el-table-column prop="drawName" label="画稿名称" align="center" ></el-table-column>
                         <el-table-column prop="source" label="画稿来源" align="center" ></el-table-column>
-                        <el-table-column prop="drawAmount" label="画稿金额" align="center"></el-table-column>
                         <el-table-column label="状态" align="center">
                             <template slot-scope="scope">
                                 <el-tag v-if="scope.row.state == 0" type="info">{{ stateFormatter(scope.row.state) }}</el-tag>

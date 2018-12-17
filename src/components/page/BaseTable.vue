@@ -90,12 +90,8 @@
                         图表<i class="el-icon-caret-bottom"></i>
                     </span>
                         <el-dropdown-menu slot="dropdown">
-                            <!--<a href="http://blog.gdfengshuo.com/about/" target="_blank">-->
-                                <el-dropdown-item @click.native="drawSchart">schart图标</el-dropdown-item>
-                            <!--</a>-->
-                            <!--<a href="https://github.com/lin-xin/vue-manage-system" target="_blank">-->
-                                <el-dropdown-item @click.native="drawCurve">画稿曲线</el-dropdown-item>
-                            <!--</a>-->
+                            <el-dropdown-item @click.native="drawSchart">schart图标</el-dropdown-item>
+                            <el-dropdown-item @click.native="drawCurve">画稿曲线</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </div>
@@ -136,7 +132,9 @@
                         <el-tag v-if="scope.row.state == 0" type="info">{{ stateFormatter(scope.row.state) }}</el-tag>
                         <el-tag v-else-if="scope.row.state == 1" type="warning">{{ stateFormatter(scope.row.state) }}
                         </el-tag>
-                        <el-tag v-else="scope.row.state == 2" type="success">{{ stateFormatter(scope.row.state) }}
+                        <el-tag v-else-if="scope.row.state == 2" type="success">{{ stateFormatter(scope.row.state) }}
+                        </el-tag>
+                        <el-tag v-else="scope.row.state == 3" type="primary">{{ stateFormatter(scope.row.state) }}
                         </el-tag>
                     </template>
                 </el-table-column>
@@ -219,7 +217,7 @@
                         </el-row>
                         <el-row :gutter="15">
                             <el-col :span="8">
-                                <el-form-item label="补加金额" class="form-label">
+                                <el-form-item label="追加金额" class="form-label">
                                     <el-input v-model="draw.addAmount" style="width: 100%;" :disabled="true"></el-input>
                                 </el-form-item>
                             </el-col>
@@ -295,6 +293,16 @@
             </div>
         </el-dialog>
 
+        <!-- 追加提示框 -->
+        <el-dialog title="追加款项" :visible.sync="addCashVisible" width="20%">
+
+            <div class="del-dialog-cnt">此幅画稿确定追加款项？</div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="addCashVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addCashConfirm()">确 定</el-button>
+            </div>
+        </el-dialog>
+
         <!-- 删除提示框 -->
         <el-dialog title="提示" :visible.sync="delVisible" width="300px" center>
             <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
@@ -361,7 +369,6 @@
                 },
                 uploadUrl:Vue.prototype.global.SERVER_ADDRESS +'/business/draw/upload?drawId=' + this.drawId,
                 activeName: 'first',
-                url: './static/vuetable.json',
                 drawId:null,
                 picUrl: null,    //点击图片预览url
                 uploadImgUrl:null,  //上传图片回显的url
@@ -406,6 +413,7 @@
                 cashVisible: false,
                 uploadVisible: false,
                 confirmVisible: false,
+                addCashVisible:false,
                 delVisible: false,
                 idx: -1,
                 account:{
@@ -413,6 +421,7 @@
                     curve:false,
                     password:null
                 },
+                drawState:{},// 更改画稿状态
                 passwdVisible:false,
 
                 //定义校验规则
@@ -578,12 +587,22 @@
                 }
             },
             stateFormatter(value) {
-                if (value == 0) {
-                    return "未收款";
-                } else if (value == 1) {
-                    return "部分收款";
-                } else {
-                    return "收完款";
+                switch (value){
+                    case 0:
+                        return "未收款";
+                        break;
+                    case 1:
+                        return "部分收款";
+                         break;
+                    case 2:
+                        return "收完款";
+                        break;
+                    case 3:
+                        return "追加款";
+                        break;
+                    default:
+                        return "";
+                    break;
                 }
             },
             cashTypeFormatter(row, column){
@@ -685,8 +704,12 @@
             confirm(index, row) {
 
                 //判断是否已经收完款
-                if(row.state == 2){
-                    this.$message.info("此幅画稿款项已经收完!")
+                if(row.state == 0){
+                    this.$message.info("此幅画稿还未收款!")
+                    return;
+                }
+                if(row.state != 1){
+                    this.$message.info("此幅画稿已收完款!")
                     return;
                 }
                 this.drawId = row.id;
@@ -711,8 +734,30 @@
                     }
                 })
             },
+            //启用追加款项
             addCashHandle(index,row){
-
+                //判断是否已经收完款
+                if(row.state == 3){
+                    this.$message.info("此幅画稿已是追加款项!")
+                    return;
+                }
+                if(row.state != 2){
+                    this.$message.info("此幅画稿款项未收完款,不能追加款项!")
+                    return;
+                }
+                this.drawState.drawId = row.id;
+                this.addCashVisible = true;
+            },
+            addCashConfirm(){
+                drawApi.changeDrawState(this.drawState).then(res => {
+                    if (res && res.code == 0) {
+                        this.$message.success(res.msg);
+                        this.addCashVisible = false;
+                        this.query();
+                    }else{
+                        this.$message.error(res.msg);
+                    }
+                })
             },
             drawSchart(){
                 this.account.schart = true;
@@ -723,15 +768,16 @@
                 this.passwdVisible = true;
             },
 
-
             confirmPasswd(){
                 if(this.account.password == "奔波儿灞"){
                     this.account.password = null;
                     this.passwdVisible = false;
                     if(this.account.schart){
+                        this.account.schart = false;
                         this.$router.push("/echarts");
                     }
                     if(this.account.curve){
+                        this.account.curve = false;
                         this.$router.push("/charts");
                     }
                 }else{

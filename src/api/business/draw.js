@@ -50,4 +50,13 @@ export default {
         return Vue.prototype.global.methodPost(url + '/complete', params);
     },
 
+    /**
+     * 启用画稿追加款项
+     * @param 实体对象
+     */
+    changeDrawState(params) {
+        return Vue.prototype.global.methodPost(url + '/changeDrawState',params);
+    },
+
+
 }
