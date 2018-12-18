@@ -54,14 +54,22 @@
             <el-row :gutter="20" class="mgb20">
                 <el-col :span="12">
                     <div class="schart-box">
-                        <div class="content-title">画稿饼状图</div>
+                        <div class="content-title">类型占比饼状图</div>
                         <schart class="schart" canvasId="pie" :data="data2" type="pie" :options="options3"></schart>
                     </div>
                 </el-col>
                 <el-col :span="12">
                     <div class="schart-box">
-                        <div class="content-title">画稿环形图</div>
+                        <div class="content-title">客户来源环形图</div>
                         <schart class="schart" canvasId="ring" :data="data3" type="ring" :options="options4"></schart>
+                    </div>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20" class="mgb20">
+                <el-col :span="12">
+                    <div class="schart-box">
+                        <div class="content-title">金额占比环形图</div>
+                        <schart class="schart" canvasId="bar" :data="data1" type="ring" :options="options1"></schart>
                     </div>
                 </el-col>
             </el-row>

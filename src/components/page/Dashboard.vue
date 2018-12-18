@@ -66,7 +66,7 @@
                 <el-card shadow="hover" style="height:403px;">
                     <div slot="header" class="clearfix">
                         <span>待收金额画稿</span>
-                        <el-button style="float: right; padding: 3px 0" type="text">倒序</el-button>
+                        <!--<el-button style="float: right; padding: 3px 0" type="text">倒序</el-button>-->
                     </div>
                     <el-table :data="itemList" :show-header="true" height="304" style="width: 100%;font-size:14px;">
 
@@ -190,9 +190,9 @@
         created(){
             this.queryNoReceiveRecord();
             this.queryOrderRecord();
-            this.queryOrderSize();
+            // this.queryOrderSize();
             this.handleListener();
-            this.changeDate();
+            // this.changeDate();
         },
         activated(){
             this.handleListener();
@@ -235,13 +235,13 @@
                     }
                 })
             },
-            changeDate(){
-                const now = new Date().getTime();
-                this.data.forEach((item, index) => {
-                    const date = new Date(now - (6 - index) * 86400000);
-                    item.name = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
-                })
-            },
+            // changeDate(){
+            //     const now = new Date().getTime();
+            //     this.data.forEach((item, index) => {
+            //         const date = new Date(now - (6 - index) * 86400000);
+            //         item.name = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
+            //     })
+            // },
             handleListener(){
                 bus.$on('collapse', this.handleBus);
                 // 调用renderChart方法对图表进行重新渲染

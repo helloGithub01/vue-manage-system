@@ -331,7 +331,7 @@
                  你是谁？
                 </el-form-item>
                 <el-form-item label="回答" style="width: 80%;" prop="cashUser">
-                    <el-input v-model="account.password"></el-input>
+                    <el-input v-model="account.password" type="password"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -769,7 +769,7 @@
             },
 
             confirmPasswd(){
-                if(this.account.password == "奔波儿灞"){
+                if(this.account.password == "123321"){
                     this.account.password = null;
                     this.passwdVisible = false;
                     if(this.account.schart){
