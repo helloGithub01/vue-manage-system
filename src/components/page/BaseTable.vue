@@ -234,6 +234,7 @@
 
         <!-- 收款弹出框 -->
         <el-dialog title="收款记录" :visible.sync="cashVisible" width="30%">
+            <div style="margin-bottom: 10px"><font color="#FF0000">提示：画稿待收金额为{{leaveAmount}} </font></div>
             <el-form ref="cashForm" :model="cashForm" :rules="cashRule" label-width="80px">
                 <el-form-item label="收款日期" prop="cashDate">
                     <el-date-picker type="date" placeholder="选择日期" v-model="cashForm.cashDate" value-format="yyyy-MM-dd HH:mm:ss"
@@ -278,6 +279,7 @@
 
         <!-- 确认提示框 -->
         <el-dialog title="确认" :visible.sync="confirmVisible" width="20%">
+            <div style="margin-bottom: 10px"><font color="#FF0000">提示：画稿待收金额为{{leaveAmount}} </font></div>
             <el-form :model="form" ref="form"  label-width="80px">
                 <el-form-item label="扣税费用" >
                     <el-input-number v-model="form.taxAmount" :min="0" :max="2000"></el-input-number>
@@ -335,7 +337,7 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="passwdVisible = false">取 消</el-button>
+                <el-button @click="closePasswd">取 消</el-button>
                 <el-button type="primary" @click="confirmPasswd">确 定</el-button>
             </span>
         </el-dialog>
@@ -423,6 +425,7 @@
                 },
                 drawState:{},// 更改画稿状态
                 passwdVisible:false,
+                leaveAmount:null,  //提示待收金额
 
                 //定义校验规则
                 cashRule: {
@@ -678,6 +681,7 @@
                     this.$message.info("此幅画稿款项已经收完!")
                     return;
                 }
+                this.leaveAmount = row.leaveAmount;
                 this.drawId = row.id;
                 this.cashVisible = true;
             },
@@ -691,6 +695,7 @@
                                 this.$message.success(res.msg);
                                 this.$refs.cashForm.resetFields();
                                 this.cashForm = {}
+                                this.leaveAmount = null;
                                 this.cashVisible = false;
                                 this.query();
                             }else{
@@ -712,6 +717,7 @@
                     this.$message.info("此幅画稿已收完款!")
                     return;
                 }
+                this.leaveAmount = row.leaveAmount;
                 this.drawId = row.id;
                 this.confirmVisible = true;
             },
@@ -725,6 +731,7 @@
                                 this.$message.success(res.msg);
                                 this.$refs.form.resetFields();
                                 this.form = {};
+                                this.leaveAmount = null;
                                 this.confirmVisible = false;
                                 this.query();
                             }else{
@@ -767,7 +774,7 @@
                 this.account.curve = true;
                 this.passwdVisible = true;
             },
-
+            //前去图表统计页面
             confirmPasswd(){
                 if(this.account.password == "123321"){
                     this.account.password = null;
@@ -783,6 +790,12 @@
                 }else{
                     this.$message.error('答案错误!');
                 }
+            },
+            closePasswd(){
+                this.account.schart = false;
+                this.account.curve = false;
+                this.account.password = null;
+                this.passwdVisible = false;
             },
             handleEdit(index, row) {
                 this.idx = index;
