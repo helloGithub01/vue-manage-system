@@ -781,11 +781,11 @@
                     this.passwdVisible = false;
                     if(this.account.schart){
                         this.account.schart = false;
-                        this.$router.push("/echarts");
+                        this.$router.push("/charts");
                     }
                     if(this.account.curve){
                         this.account.curve = false;
-                        this.$router.push("/charts");
+                        this.$router.push("/echarts");
                     }
                 }else{
                     this.$message.error('答案错误!');
