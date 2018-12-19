@@ -111,9 +111,9 @@
             },
             options3: {
                 title: '不同画稿类型金额比',
-                bgColor: '#829dca',
-                titleColor: '#ffffff',
-                legendColor: '#ffffff',
+                bgColor: '#4b6b93',
+                titleColor: '#daf3fd',
+                legendColor: '#a4a4a4',
                 radius: 120
             },
             options4: {
