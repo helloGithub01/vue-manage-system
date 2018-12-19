@@ -20,7 +20,7 @@ export default {
     },
 
     /**
-     * 查询画稿金额数
+     * 查询画稿类型金额数
      * @param 实体对象
      */
     selectDrawTypeAmount() {
@@ -28,11 +28,19 @@ export default {
     },
 
     /**
-     * 查询画稿金额数
+     * 查询画稿客户金额数
      * @param 实体对象
      */
     selectDrawSourceAmount() {
         return Vue.prototype.global.methodPost(url + '/selectDrawSourceAmount');
+    },
+
+    /**
+     * 查询画稿占比金额数
+     * @param 实体对象
+     */
+    selectDrawRateAmount() {
+        return Vue.prototype.global.methodPost(url + '/selectDrawRateAmount');
     },
 
 

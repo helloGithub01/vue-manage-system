@@ -90,14 +90,7 @@
             totalAmount: null,
             receiveAmount: null,
             noReceiveAmount: null,
-            data1: [
-                {name: '2012', value: 1141},
-                {name: '2013', value: 1499},
-                {name: '2014', value: 2260},
-                {name: '2015', value: 1170},
-                {name: '2016', value: 970},
-                {name: '2017', value: 1450}
-            ],
+            data1: [],   //资金占比
             data2: [],  //类型金额数
             data3: [],  //来源金额数
             options1: {
@@ -156,6 +149,13 @@
                     }
                 })
             },
+            selectDrawRateAmountFunc(){
+                echartsApi.selectDrawRateAmount().then(data => {
+                    if (data && data.code == 0) {
+                        this.data1 = data.list;
+                    }
+                })
+            },
         },
         created:function () {
 
@@ -164,6 +164,8 @@
             this.selectDrawTypeAmountFunc();
             //不同客户金额比；
             this.selectDrawSourceAmountFunc();
+            //不同资金占比
+            this.selectDrawRateAmountFunc();
         }
 
     }
