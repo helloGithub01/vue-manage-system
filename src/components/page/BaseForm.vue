@@ -154,6 +154,12 @@
             onSubmit() {
                 this.$refs.form.validate((valid) => {
                     if (valid){
+
+                        if(this.form.assistCash > this.form.deposit){
+                            this.$message.error('协助金额不能大于定金');
+                            return;
+                        }
+
                         this.form.isPay = (this.form.ifPay == true ? '1':'0');
                         this.form.isMulti = (this.form.ifMulti == true ? '1':'0');
                         drawApi.addBusinessDraw(this.form).then(res=>{

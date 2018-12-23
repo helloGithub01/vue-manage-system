@@ -90,7 +90,7 @@
                         图表<i class="el-icon-caret-bottom"></i>
                     </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item @click.native="drawSchart">schart图标</el-dropdown-item>
+                            <el-dropdown-item @click.native="drawSchart">schart图表</el-dropdown-item>
                             <el-dropdown-item @click.native="drawCurve">画稿曲线</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
@@ -330,7 +330,7 @@
             :visible.sync="passwdVisible">
             <el-form  :model="account" label-width="80px">
                 <el-form-item label="问题" style="width: 80%;" prop="cashUser">
-                 你是谁？
+                 请输入口令？
                 </el-form-item>
                 <el-form-item label="回答" style="width: 80%;" prop="cashUser">
                     <el-input v-model="account.password" type="password"></el-input>
@@ -776,17 +776,19 @@
             },
             //前去图表统计页面
             confirmPasswd(){
-                if(this.account.password == "123321"){
+                if(this.account.password == "666888"){
                     this.account.password = null;
                     this.passwdVisible = false;
                     if(this.account.schart){
                         this.account.schart = false;
                         this.$router.push("/charts");
-                    }
-                    if(this.account.curve){
+                    }else if(this.account.curve){
                         this.account.curve = false;
                         this.$router.push("/echarts");
+                    }else{
+                        this.$message.error('请选择查看项!');
                     }
+
                 }else{
                     this.$message.error('答案错误!');
                 }
