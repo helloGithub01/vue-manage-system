@@ -103,7 +103,7 @@
                 yEqual: 7
             },
             options2: {
-                title: '某商店近年营业总额',
+                title: '不同金额类型占比',
                 bgColor: '#D5E4EB',
                 titleColor: '#00887C',
                 fillColor: 'red',

@@ -100,7 +100,7 @@
 
             <el-table :data="tableData" border class="table" ref="multipleTable" highlight-current-row
                       @selection-change="handleSelectionChange" :row-class-name="tableRowClassName"
-                      :summary-method="getSummaries" @row-click="showRowItem"
+                      :summary-method="getSummaries" @row-click="showRowItem"  v-loading="loading"
                       show-summary>
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="orderDate" label="接单日期" align="center" sortable width="130">
@@ -370,6 +370,7 @@
                 token: {
                     token: sessionStorage.getItem('token'),
                 },
+                loading: false,
                 uploadUrl:Vue.prototype.global.SERVER_ADDRESS +'/business/draw/upload?drawId=' + this.drawId,
                 activeName: 'first',
                 drawId:null,
@@ -513,8 +514,9 @@
                     param.beginTime = this.dataForm.dataValue[0];
                     param.endTime = this.dataForm.dataValue[1];
                 }
+                this.loading = true;
                 drawApi.selectListByPage(param).then(data => {
-
+                    this.loading = false;
                     if (data && data.code == 0) {
                         this.tableData = data.page.list;
                         this.pageData.total = data.page.totalCount;
