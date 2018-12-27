@@ -48,6 +48,7 @@
                                     <el-option key="0" label="未收款" value="0"></el-option>
                                     <el-option key="1" label="部分收款" value="1"></el-option>
                                     <el-option key="2" label="收完款" value="2"></el-option>
+                                    <el-option key="3" label="追加款" value="3"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -168,7 +169,7 @@
                         <el-table-column prop="cashUser" label="收款人" align="center"></el-table-column>
                         <el-table-column prop="getCash" label="收款金额" align="center"></el-table-column>
                         <el-table-column prop="assistCash" label="协助金额" align="center"></el-table-column>
-                        <el-table-column prop="noGetCash" label="待收金额" align="center"></el-table-column>
+                        <el-table-column prop="noGetCash" label="未收金额" align="center"></el-table-column>
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="画稿详情" name="second">
@@ -222,7 +223,7 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="8">
-                                <el-form-item label="待收金额" class="form-label">
+                                <el-form-item label="未收金额" class="form-label">
                                     <el-input v-model="draw.leaveAmount" style="width: 100%;" :disabled="true"></el-input>
                                 </el-form-item>
                             </el-col>
@@ -234,7 +235,7 @@
 
         <!-- 收款弹出框 -->
         <el-dialog title="收款记录" :visible.sync="cashVisible" width="30%">
-            <div style="margin-bottom: 10px"><font color="#FF0000">提示：画稿待收金额为{{leaveAmount}} </font></div>
+            <div style="margin-bottom: 10px"><font color="#FF0000">提示：画稿未收金额为{{leaveAmount}} </font></div>
             <el-form ref="cashForm" :model="cashForm" :rules="cashRule" label-width="80px">
                 <el-form-item label="收款日期" prop="cashDate">
                     <el-date-picker type="date" placeholder="选择日期" v-model="cashForm.cashDate" value-format="yyyy-MM-dd HH:mm:ss"
@@ -279,7 +280,7 @@
 
         <!-- 确认提示框 -->
         <el-dialog title="确认" :visible.sync="confirmVisible" width="20%">
-            <div style="margin-bottom: 10px"><font color="#FF0000">提示：画稿待收金额为{{leaveAmount}} </font></div>
+            <div style="margin-bottom: 10px"><font color="#FF0000">提示：画稿未收金额为{{leaveAmount}} </font></div>
             <el-form :model="form" ref="form"  label-width="80px">
                 <el-form-item label="扣税费用" >
                     <el-input-number v-model="form.taxAmount" :min="0" :max="2000"></el-input-number>
@@ -383,7 +384,10 @@
                 tableData: [],   //画稿列表
                 cashDatas: [],   //收款明细
                 cashForm:{},    //增加画稿收款记录
-                form:{},   //画稿确认
+                form:{    //画稿确认
+                    taxAmount:0,
+                    remark:null
+                },
                 cashTypeList: [{
                     value: "XJ",
                     label: "现金"
@@ -425,7 +429,7 @@
                 },
                 drawState:{},// 更改画稿状态
                 passwdVisible:false,
-                leaveAmount:null,  //提示待收金额
+                leaveAmount:null,  //提示未收金额
 
                 //定义校验规则
                 cashRule: {
@@ -689,6 +693,10 @@
             saveCashRecord(){
                 this.$refs.cashForm.validate((valid) => {
                     if (valid) {
+                        if(this.cashForm.getCash <= this.cashForm.assistCash){
+                            this.$message.error("协助金额不能大等于收款金额!");
+                            return;
+                        }
                         this.cashForm.drawId = this.drawId;
                         drawApi.addCashRecord(this.cashForm).then(res => {
                             if (res && res.code == 0) {
@@ -725,6 +733,14 @@
             complete() {
                 this.$refs.form.validate((valid) => {
                     if (valid) {
+                        if(this.form.taxAmount == 0){
+                            this.$message.error("扣税金额不能等于0");
+                            return;
+                        }
+                        if(this.form.taxAmount < this.leaveAmount){
+                            this.$message.error("扣税金额小于未收款金额,请备注信息!");
+                            return;
+                        }
                         this.form.drawId = this.drawId;
                         drawApi.completeDraw(this.form).then(res => {
                             if (res && res.code == 0) {
@@ -790,7 +806,7 @@
                     }
 
                 }else{
-                    this.$message.error('答案错误!');
+                    this.$message.error('口令错误!');
                 }
             },
             closePasswd(){
