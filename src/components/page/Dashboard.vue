@@ -34,7 +34,7 @@
                             <div class="grid-content grid-con-1">
                                 <i class="el-icon-lx-people grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">5</div>
+                                    <div class="grid-num">20</div>
                                     <div>用户人数</div>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                             <div class="grid-content grid-con-2">
                                 <i class="el-icon-lx-mail grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">12</div>
+                                    <div class="grid-num">18</div>
                                     <div>已发邮件</div>
                                 </div>
                             </div>
@@ -56,7 +56,7 @@
                             <div class="grid-content grid-con-3">
                                 <i class="el-icon-lx-picfill grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">35</div>
+                                    <div class="grid-num">2018</div>
                                     <div>画稿图片总数</div>
                                 </div>
                             </div>
@@ -71,7 +71,7 @@
                     <el-table :data="itemList" :show-header="true" height="304" style="width: 100%;font-size:14px;">
 
                         <el-table-column type="index" label="序号" align="center"></el-table-column>
-                        <el-table-column prop="dateStr" label="日期" align="center" ></el-table-column>
+                        <el-table-column prop="dateStr" label="接单日期" align="center" ></el-table-column>
                         <el-table-column prop="drawName" label="画稿名称" align="center" ></el-table-column>
                         <el-table-column prop="source" label="画稿来源" align="center" ></el-table-column>
                         <el-table-column label="状态" align="center">

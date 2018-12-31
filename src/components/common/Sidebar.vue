@@ -66,7 +66,7 @@
                     {
                         icon: 'el-icon-lx-copy',
                         index: 'tabs',
-                        title: '消息选项卡'
+                        title: '系统消息'
                     },
                     {
                         icon: 'el-icon-lx-calendar',

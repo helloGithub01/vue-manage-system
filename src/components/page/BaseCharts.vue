@@ -94,7 +94,7 @@
             data2: [],  //类型金额数
             data3: [],  //来源金额数
             options1: {
-                title: '某商店近年营业总额',
+                title: '画稿收入金额占比',
                 autoWidth: true,   // 设置宽高自适应
                 showValue: false,
                 bgColor: '#F9EFCC',
@@ -103,21 +103,21 @@
                 yEqual: 7
             },
             options2: {
-                title: '不同金额类型占比',
+                title: '画稿收入金额占比',
                 bgColor: '#D5E4EB',
                 titleColor: '#00887C',
                 fillColor: 'red',
                 contentColor: 'rgba(46,199,201,0.3)'
             },
             options3: {
-                title: '不同画稿类型金额比',
+                title: '画稿类型金额占比',
                 bgColor: '#4b6b93',
                 titleColor: '#daf3fd',
                 legendColor: '#a4a4a4',
                 radius: 120
             },
             options4: {
-                title: '不同客户商画稿金额比',
+                title: '画稿客户源金额占比',
                 bgColor: '#829daa',
                 titleColor: '#ffffff',
                 legendColor: '#ffffff',
