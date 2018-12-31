@@ -193,6 +193,13 @@
             // this.queryOrderSize();
             this.handleListener();
             // this.changeDate();
+            this.$notify({
+                title: '系统消息',
+                message: '这是一个专注于画稿金额管理的系统，欢迎你的到来！',
+                type:"success",
+                position:"top-right",
+                duration: 5000
+            });
         },
         activated(){
             this.handleListener();
