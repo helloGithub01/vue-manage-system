@@ -155,6 +155,10 @@
                 this.$refs.form.validate((valid) => {
                     if (valid){
 
+                        if(this.form.deposit > this.form.drawAmount){
+                            this.$message.error('定金不能大于画稿金额');
+                            return;
+                        }
                         if(this.form.assistCash > this.form.deposit){
                             this.$message.error('协助金额不能大于定金');
                             return;
