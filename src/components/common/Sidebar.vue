@@ -44,9 +44,19 @@
                         title: '系统首页'
                     },
                     {
+                        icon: 'el-icon-lx-copy',
+                        index: 'tabs',
+                        title: '系统消息'
+                    },
+                    {
                         icon: 'el-icon-lx-cascades',
-                        index: 'table',
-                        title: '画稿表格'
+                        index: 'drawTable',
+                        title: '画稿列表'
+                    },
+                    {
+                        icon: 'el-icon-lx-cascades',
+                        index: 'cashTable',
+                        title: '画稿收款'
                     },
                     {
                         icon: 'el-icon-lx-pic',
@@ -63,11 +73,6 @@
                     //     index: 'charts',
                     //     title: 'schart图表'
                     // },
-                    {
-                        icon: 'el-icon-lx-copy',
-                        index: 'tabs',
-                        title: '系统消息'
-                    },
                     {
                         icon: 'el-icon-lx-calendar',
                         index: '3',

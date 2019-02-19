@@ -32,6 +32,7 @@
                                     <el-option key="2" label="人文" value="人文"></el-option>
                                     <el-option key="3" label="地图" value="地图"></el-option>
                                     <el-option key="4" label="美食" value="美食"></el-option>
+                                    <el-option key="5" label="物产" value="物产"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>

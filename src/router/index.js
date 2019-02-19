@@ -25,9 +25,14 @@ export default new Router({
                     meta: { title: '自定义图标' }
                 },
                 {
-                    path: '/table',
+                    path: '/drawTable',
                     component: resolve => require(['../components/page/BaseTable.vue'], resolve),
-                    meta: { title: '画稿表格' }
+                    meta: { title: '画稿列表' }
+                },
+                {
+                    path: '/cashTable',
+                    component: resolve => require(['../components/page/cashTable.vue'], resolve),
+                    meta: { title: '画稿收款' }
                 },
                 {
                     path: '/tabs',
