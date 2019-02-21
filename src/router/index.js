@@ -32,7 +32,7 @@ export default new Router({
                 {
                     path: '/cashTable',
                     component: resolve => require(['../components/page/cashTable.vue'], resolve),
-                    meta: { title: '画稿收款' }
+                    meta: { title: '收款记录' }
                 },
                 {
                     path: '/tabs',

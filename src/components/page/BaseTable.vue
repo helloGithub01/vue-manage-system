@@ -109,13 +109,13 @@
                         <i class="el-icon-lx-time" style="font-size: 15px;color: #2b33ff">{{dataFormatter1(scope.row.orderDate) }}</i>
                     </template>
                 </el-table-column>
+                <el-table-column prop="source" label="画稿客户" align="center" width="130"></el-table-column>
                 <el-table-column prop="drawName" label="画稿名称" align="center" width="150"></el-table-column>
-                <el-table-column prop="source" label="画稿客户" align="center" width="200"></el-table-column>
                 <el-table-column prop="drawType" label="画稿类型" align="center" width="100"></el-table-column>
-                <el-table-column prop="isPay" label="是否定金" align="center" width="100">
+                <el-table-column prop="deposit" label="定金($)" align="center" width="100">
                     <template slot-scope="scope">
-                        <el-tag :type="scope.row.isPay === 1?'success':'warning'">{{ payFormatter(scope.row.isPay) }}
-                        </el-tag>
+                        <el-tag  v-if="scope.row.isPay == 0" type="warning">{{ payFormatter(scope.row.isPay) }}</el-tag>
+                        <el-tag  v-if="scope.row.isPay == 1" type="success">{{scope.row.deposit}}</el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column prop="picUrl" label="画稿图片" align="center" width="120">
@@ -124,7 +124,7 @@
                              @click="showBigImg(scope.row.picUrl)">
                     </template>
                 </el-table-column>
-                <el-table-column prop="drawAmount" label="画稿金额(元)" sortable align="center" width="140">
+                <el-table-column prop="drawAmount" label="画稿金额(元)" sortable align="center" width="130">
                     <template slot-scope="scope">
                         <i class="el-icon-lx-redpacket_fill" style="font-size: 15px;color: #ff5900">{{scope.row.drawAmount | rounding}}</i>
                     </template>
@@ -140,9 +140,11 @@
                         </el-tag>
                     </template>
                 </el-table-column>
+                <el-table-column prop="assistCash" label="协助费" align="center" width="100"></el-table-column>
+                <el-table-column prop="leaveAmount" label="待收金额" align="center" width="100"></el-table-column>
                 <el-table-column prop="confirmDate" label="完结时间" align="center" width="180"></el-table-column>
-                <el-table-column prop="createUser" label="接单人" align="center" width="120"></el-table-column>
-                <el-table-column label="操作" width="250" align="center">
+                <el-table-column prop="createUser" label="接单人" align="center" width="100"></el-table-column>
+                <el-table-column label="操作" width="250" align="center" fixed="right">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-goods" @click="handleCash(scope.$index, scope.row)">收款
                         </el-button>
@@ -545,6 +547,58 @@
                         return;
                     }
                     if (index == 7) {
+                        //画稿金额
+                        const values = data.map(item =>
+                            Number(item[column.property]));
+                        if (!values.every(value => isNaN(value))) {
+                            sums[index] = values.reduce((prev, curr) => {
+                                const value = Number(curr);
+                                if (!isNaN(value)) {
+                                    return prev + curr;
+                                } else {
+                                    return prev;
+                                }
+                            }, 0);
+                            sums[index] += ' 元';
+                        } else {
+                            sums[index] = '';
+                        }
+                    }else if (index == 5){
+                        //画稿定金
+                        const values = data.map(item =>
+                            Number(item[column.property]));
+                        if (!values.every(value => isNaN(value))) {
+                            sums[index] = values.reduce((prev, curr) => {
+                                const value = Number(curr);
+                                if (!isNaN(value)) {
+                                    return prev + curr;
+                                } else {
+                                    return prev;
+                                }
+                            }, 0);
+                            sums[index] += ' 元';
+                        } else {
+                            sums[index] = '';
+                        }
+                    }else if (index == 9) {
+                        //协助费用
+                        const values = data.map(item =>
+                            Number(item[column.property]));
+                        if (!values.every(value => isNaN(value))) {
+                            sums[index] = values.reduce((prev, curr) => {
+                                const value = Number(curr);
+                                if (!isNaN(value)) {
+                                    return prev + curr;
+                                } else {
+                                    return prev;
+                                }
+                            }, 0);
+                            sums[index] += ' 元';
+                        } else {
+                            sums[index] = '';
+                        }
+                    }else if(index == 10){
+                        //待收金额
                         const values = data.map(item =>
                             Number(item[column.property]));
                         if (!values.every(value => isNaN(value))) {

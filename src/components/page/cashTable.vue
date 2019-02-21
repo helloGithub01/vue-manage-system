@@ -51,7 +51,7 @@
                       :summary-method="getSummaries" v-loading="loading"
                       show-summary>
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="orderDate" label="收款日期" align="center" sortable width="130">
+                <el-table-column prop="cashDate" label="收款日期" align="center" sortable width="130">
                     <template slot-scope="scope">
                         <i class="el-icon-lx-time" style="font-size: 15px;color: #2b33ff">{{dataFormatter1(scope.row.cashDate) }}</i>
                     </template>
@@ -97,37 +97,36 @@
             </div>
         </div>
 
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 统计收款</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
+        <!--<div class="crumbs">-->
+            <!--<el-breadcrumb separator="/">-->
+                <!--<el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 统计收款</el-breadcrumb-item>-->
+            <!--</el-breadcrumb>-->
+        <!--</div>-->
 
         <div class="container">
-            <el-table :data="tableData2" border class="table" ref="multipleTable2" highlight-current-row
-                      v-loading="loading">
+            <!--<el-table :data="tableData2" border class="table" ref="multipleTable2" highlight-current-row>-->
 
-                <el-table-column prop="orderDate" label="收款月份" align="center" sortable width="450">
-                    <template slot-scope="scope">
-                        <div class="grid-cont-right">
-                            <div class="grid-num-1">{{dataFormatter1(scope.row.orderDate) }}</div>
-                        </div>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="orderDate" label="金额数量" align="center" sortable width="600">
-                    <template slot-scope="scope">
+                <!--<el-table-column prop="orderDate" label="收款月份" align="center" sortable width="450">-->
+                    <!--<template slot-scope="scope">-->
+                        <!--<div class="grid-cont-right">-->
+                            <!--<div class="grid-num-1">{{scope.row.month }}</div>-->
+                        <!--</div>-->
+                    <!--</template>-->
+                <!--</el-table-column>-->
+                <!--<el-table-column prop="orderDate" label="金额数量" align="center" sortable width="600">-->
+                    <!--<template slot-scope="scope">-->
 
-                        <div class="grid-content grid-con-1">
-                            <i class="el-icon-lx-redpacket grid-con-icon"></i>
-                            <div class="grid-cont-right">
-                                <div class="grid-num">1000</div>
-                                <div>已收金额</div>
-                            </div>
-                        </div>
-                    </template>
-                </el-table-column>
+                        <!--<div class="grid-content grid-con-1">-->
+                            <!--<i class="el-icon-lx-redpacket grid-con-icon"></i>-->
+                            <!--<div class="grid-cont-right">-->
+                                <!--<div class="grid-num">{{scope.row.cash }}</div>-->
+                                <!--<div>已收金额</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</template>-->
+                <!--</el-table-column>-->
 
-            </el-table>
+            <!--</el-table>-->
 
         </div>
 
@@ -194,6 +193,7 @@
         },
         created() {
             this.query();
+            // this.queryCashByMonth();
         },
         watch: {
         },
@@ -231,6 +231,14 @@
                     this.pageData.pageSize = param.size;
                 });
             },
+            //按月统计收款
+            queryCashByMonth(){
+                cashApi.selectMonthDrawCash().then(data => {
+                    if (data && data.code == 0) {
+                        this.tableData2 = data.data;
+                    }
+                });
+            },
             resetQuery() {
                 this.dataForm.dataValue = [];
                 this.dataForm = {};
@@ -246,7 +254,7 @@
                         sums[index] = '合计';
                         return;
                     }
-                    if (index == 1) {
+                    if (index == 5) {
                         const values = data.map(item =>
                             Number(item[column.property]));
                         if (!values.every(value => isNaN(value))) {

@@ -16,8 +16,8 @@ export default {
      * 按月统计查询
      * @param 分页对象
      */
-    selectMonthDrawCash(params) {
-        return Vue.prototype.global.methodPost(url + '/selectMonthCash', params);
+    selectMonthDrawCash() {
+        return Vue.prototype.global.methodPost(url + '/selectMonthCash');
     },
 
 

@@ -56,7 +56,7 @@
                     {
                         icon: 'el-icon-lx-cascades',
                         index: 'cashTable',
-                        title: '画稿收款'
+                        title: '收款记录'
                     },
                     {
                         icon: 'el-icon-lx-pic',
