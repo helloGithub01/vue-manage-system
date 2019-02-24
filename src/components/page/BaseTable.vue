@@ -144,16 +144,18 @@
                 <el-table-column prop="leaveAmount" label="待收金额" align="center" width="100"></el-table-column>
                 <el-table-column prop="confirmDate" label="完结时间" align="center" width="180"></el-table-column>
                 <el-table-column prop="createUser" label="接单人" align="center" width="100"></el-table-column>
-                <el-table-column label="操作" width="250" align="center" fixed="right">
+                <el-table-column label="操作" width="200" align="center" fixed="right">
                     <template slot-scope="scope">
-                        <el-button type="text" icon="el-icon-goods" @click="handleCash(scope.$index, scope.row)">收款
-                        </el-button>
-                        <el-button type="text" icon="el-icon-lx-tag" @click="confirm(scope.$index, scope.row)">确认
-                        </el-button>
+                        <el-button type="text" icon="el-icon-lx-edit" :disabled="scope.row.state == 0?false:true"
+                                   @click="editShow(scope.$index, scope.row)">编辑</el-button>
+                        <el-button type="text" icon="el-icon-goods" :disabled="scope.row.state != 2?false:true"
+                                   @click="handleCash(scope.$index, scope.row)">收款</el-button>
+                        <el-button type="text" icon="el-icon-lx-read" :disabled="scope.row.state == 1?false:true"
+                                   @click="confirm(scope.$index, scope.row)">确认</el-button>
                         <el-button type="text" icon="el-icon-upload" @click="handleUpload(scope.$index, scope.row)">上传
                         </el-button>
-                        <el-button type="text" icon="el-icon-lx-punch" @click="addCashHandle(scope.$index, scope.row)">补款
-                        </el-button>
+                        <el-button type="text" icon="el-icon-lx-punch" :disabled="scope.row.state == 2?false:true"
+                                   @click="addCashHandle(scope.$index, scope.row)">补款</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -173,6 +175,12 @@
                         <el-table-column prop="getCash" label="收款金额" align="center"></el-table-column>
                         <el-table-column prop="assistCash" label="协助金额" align="center"></el-table-column>
                         <el-table-column prop="noGetCash" label="未收金额" align="center"></el-table-column>
+                        <el-table-column label="操作" align="center">
+                            <template slot-scope="scope">
+                                <el-button type="text" :disabled="(scope.$index+1 == cashDatas.length && scope.row.noGetCash >0) ?false:true"
+                                           @click="deleteDetail(scope.$index, scope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="画稿详情" name="second">
@@ -235,6 +243,58 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
+
+        <!-- 编辑弹框 -->
+        <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
+            <div style="margin-bottom: 10px"></div>
+            <el-form ref="form" :model="editObj" label-width="80px">
+                <el-form-item label="画稿名称" prop="drawName">
+                    <el-input v-model="editObj.drawName"  style="width: 80%;" placeholder="请输入画稿名称"></el-input>
+                </el-form-item>
+                <el-form-item label="画稿类型" prop="drawType">
+                    <el-select v-model="editObj.drawType" placeholder="请选择画稿类型">
+                        <el-option key="1" label="风景" value="风景"></el-option>
+                        <el-option key="2" label="人文" value="人文"></el-option>
+                        <el-option key="3" label="地图" value="地图"></el-option>
+                        <el-option key="4" label="美食" value="美食"></el-option>
+                        <el-option key="5" label="物产" value="物产"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="接单日期" prop="orderDate">
+                    <el-col :span="11">
+                        <el-date-picker type="date" placeholder="接单日期" v-model="editObj.orderDate" style="width: 100%;" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="画稿金额" prop="drawAmount">
+                    <el-input-number v-model="editObj.drawAmount" :min="0.00" :max="10000.00"></el-input-number>
+                </el-form-item>
+                <el-form-item label="是否定金" >
+                    <el-switch v-model="editObj.ifPay"></el-switch>
+                </el-form-item>
+                <el-form-item label="定金金额" v-show="editObj.ifPay">
+                    <el-input-number v-model="editObj.deposit" :min="0.00" :max="2000.00"></el-input-number>
+                </el-form-item>
+
+                <el-form-item label="是否多人" >
+                    <el-switch v-model="editObj.ifMulti"></el-switch>
+                </el-form-item>
+                <el-form-item label="协助费用" v-show="editObj.ifMulti">
+                    <el-input-number v-model="editObj.assistCash" :min="0.00" :max="2000.00"></el-input-number>
+                </el-form-item>
+                <el-form-item label="画稿来源" prop="source">
+                    <el-radio-group v-model="editObj.source">
+                        <el-radio label="十月微城"></el-radio>
+                        <el-radio label="尘星文化"></el-radio>
+                        <el-radio label="中国国家地理"></el-radio>
+                        <el-radio label="散客"></el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="editVisible = false">取消</el-button>
+                    <el-button type="primary" @click="edit()">确认</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
 
         <!-- 收款弹出框 -->
         <el-dialog title="收款记录" :visible.sync="cashVisible" width="30%">
@@ -388,6 +448,7 @@
                 tableData: [],   //画稿列表
                 cashDatas: [],   //收款明细
                 cashForm:{},    //增加画稿收款记录
+                editObj:{},  //编辑画稿
                 form:{    //画稿确认
                     taxAmount:0,
                     remark:null
@@ -422,7 +483,8 @@
                 editVisible: false,
                 cashVisible: false,
                 uploadVisible: false,
-                confirmVisible: false,
+                confirmVisible:false,
+                editVisible: false,
                 addCashVisible:false,
                 delVisible: false,
                 idx: -1,
@@ -733,7 +795,43 @@
             closeUpload(){
                 this.uploadImgUrl = null;
             },
+            //编辑画稿弹窗
+            editShow(index, row) {
 
+                this.editObj = Object.assign({},row);
+                this.editObj.ifMulti = this.editObj.isMulti == 1?true:false;
+                this.editObj.ifPay = this.editObj.isPay == 1>0?true:false;
+                this.editVisible = true;
+            },
+            //编辑
+            edit(){
+                drawApi.updateBusinessDraw(this.editObj).then(data =>{
+                    if (data && data.code == 0) {
+                        this.editVisible = false;
+                        this.$message.success("更新成功!")
+                        this.query();
+                    }else{
+                        this.$message.error("更新失败!")
+                    }
+                })
+            },
+            //删除收款记录
+            deleteDetail(index,row){
+                drawApi.deleteDrawCashOne(row).then(data =>{
+                    if (data && data.code == 0) {
+                        this.$message.success("删除成功!")
+                        this.query();
+                        var param = {"drawId":row.id};
+                        drawApi.queryDrawCash(param).then(data =>{
+                            if (data && data.code == 0) {
+                                this.cashDatas = data.list;
+                            }
+                        })
+                    }else{
+                        this.$message.error(data.msg)
+                    }
+                })
+            },
             //收款弹窗
             handleCash(index, row) {
 
@@ -750,7 +848,7 @@
             saveCashRecord(){
                 this.$refs.cashForm.validate((valid) => {
                     if (valid) {
-                        if(this.cashForm.getCash <= this.cashForm.assistCash){
+                        if(this.cashForm.getCash < this.cashForm.assistCash){
                             this.$message.error("协助金额不能大等于收款金额!");
                             return;
                         }

@@ -181,7 +181,7 @@
                                     picUrl:null,
                                     remark: null
                                 },
-                                this.$router.push("/table")
+                                this.$router.push("/drawTable")
                             }else{
                                 this.$message({
                                     message: res.msg,

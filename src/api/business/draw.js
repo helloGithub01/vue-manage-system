@@ -17,6 +17,20 @@ export default {
     addBusinessDraw(params) {
         return Vue.prototype.global.methodPost(url + '/save', params);
     },
+    /**
+     * 更新
+     * @param 实体对象
+     */
+    updateBusinessDraw(params) {
+        return Vue.prototype.global.methodPost(url + '/update', params);
+    },
+    /**
+     * 删除收款记录
+     * @param 实体对象
+     */
+    deleteDrawCashOne(params) {
+        return Vue.prototype.global.methodPost('/business/cash/deleteDrawCash', params);
+    },
 
     /**
      * 上传画稿
