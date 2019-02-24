@@ -145,6 +145,8 @@
         data() {
             return {
                 params: {},
+                temp1:null,
+                temp2:null,
                 dataForm: {
                     drawName: null,
                     min: 0,
@@ -266,7 +268,8 @@
                                     return prev;
                                 }
                             }, 0);
-                            sums[index] += ' 元';
+                            this.temp1 =  sums[index];
+                            sums[index] +=' 元(总额)';
                         } else {
                             sums[index] = '';
                         }
@@ -282,10 +285,14 @@
                                     return prev;
                                 }
                             }, 0);
-                            sums[index] += ' 元';
+                            this.temp2 =  sums[index];
+                            sums[index] +=' 元(协助)';
                         } else {
                             sums[index] = '';
                         }
+                    }else if(index == 6){
+                        //自己所得费用
+                        sums[index] = (this.temp1-this.temp2)+" 元(林一)";
                     }
                 });
                 return sums;
