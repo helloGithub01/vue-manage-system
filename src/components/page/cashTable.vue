@@ -286,13 +286,13 @@
                                 }
                             }, 0);
                             this.temp2 =  sums[index];
-                            sums[index] +=' 元(协助)';
+                            sums[index] +=' 元';
                         } else {
                             sums[index] = '';
                         }
                     }else if(index == 6){
                         //自己所得费用
-                        sums[index] = (this.temp1-this.temp2)+" 元(林一)";
+                        sums[index] = (this.temp1-this.temp2)+" 元";
                     }
                 });
                 return sums;

@@ -13,18 +13,18 @@
                         <el-button slot="prepend" icon="el-icon-lx-lock"></el-button>
                     </el-input>
                 </el-form-item>
-                <el-form-item prop="captcha">
-                    <el-row :gutter="20">
-                        <el-col :span="14">
-                            <el-input v-model="ruleForm.captcha" placeholder="验证码">
-                                <el-button slot="prepend" icon="el-icon-lx-info"></el-button>
-                            </el-input>
-                        </el-col>
-                        <el-col :span="10" class="login-captcha">
-                            <img :src="captchaPath" @click="getCaptcha()" alt="验证码">
-                        </el-col>
-                    </el-row>
-                </el-form-item>
+                <!--<el-form-item prop="captcha">-->
+                    <!--<el-row :gutter="20">-->
+                        <!--<el-col :span="14">-->
+                            <!--<el-input v-model="ruleForm.captcha" placeholder="验证码">-->
+                                <!--<el-button slot="prepend" icon="el-icon-lx-info"></el-button>-->
+                            <!--</el-input>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="10" class="login-captcha">-->
+                            <!--<img :src="captchaPath" @click="getCaptcha()" alt="验证码">-->
+                        <!--</el-col>-->
+                    <!--</el-row>-->
+                <!--</el-form-item>-->
                 <div class="login-btn">
                     <el-button type="primary" @click="submitForm('ruleForm')" :loading="logining">登录</el-button>
                 </div>
@@ -36,7 +36,7 @@
 
 <script>
     import Vue from "vue";
-    import { requestLogin,getCaptcha} from '../../api/login';
+    import { requestLogin} from '../../api/login';
     import UUidUtils from '../../Global'
     export default {
         data: function(){
@@ -63,11 +63,11 @@
         },
         methods: {
              // 获取验证码
-             getCaptcha () {
-                 this.ruleForm.uuid = UUidUtils.getUUid(32,"");
-                 // this.captchaPath =  getCaptcha(this.ruleForm.uuid);
-                 this.captchaPath =  Vue.prototype.global.SERVER_ADDRESS+"/captcha.jpg?uuid="+this.ruleForm.uuid;
-             },
+             // getCaptcha () {
+             //     this.ruleForm.uuid = UUidUtils.getUUid(32,"");
+             //     // this.captchaPath =  getCaptcha(this.ruleForm.uuid);
+             //     this.captchaPath =  Vue.prototype.global.SERVER_ADDRESS+"/captcha.jpg?uuid="+this.ruleForm.uuid;
+             // },
             submitForm(ruleForm) {
                 this.$refs[ruleForm].validate((valid) => {
                     this.logining = true;
