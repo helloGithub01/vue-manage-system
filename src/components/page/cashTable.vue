@@ -37,7 +37,8 @@
                                 </el-date-picker>
                             </el-form-item>
                         </el-col>
-
+                    </el-row>
+                    <el-row>
                         <el-col :span="4">
                             <el-button type="primary" icon="search" @click="query()">搜索</el-button>
                             <el-button icon="search" @click="resetQuery()">置空</el-button>
@@ -97,40 +98,6 @@
             </div>
         </div>
 
-        <!--<div class="crumbs">-->
-            <!--<el-breadcrumb separator="/">-->
-                <!--<el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 统计收款</el-breadcrumb-item>-->
-            <!--</el-breadcrumb>-->
-        <!--</div>-->
-
-        <div class="container">
-            <!--<el-table :data="tableData2" border class="table" ref="multipleTable2" highlight-current-row>-->
-
-                <!--<el-table-column prop="orderDate" label="收款月份" align="center" sortable width="450">-->
-                    <!--<template slot-scope="scope">-->
-                        <!--<div class="grid-cont-right">-->
-                            <!--<div class="grid-num-1">{{scope.row.month }}</div>-->
-                        <!--</div>-->
-                    <!--</template>-->
-                <!--</el-table-column>-->
-                <!--<el-table-column prop="orderDate" label="金额数量" align="center" sortable width="600">-->
-                    <!--<template slot-scope="scope">-->
-
-                        <!--<div class="grid-content grid-con-1">-->
-                            <!--<i class="el-icon-lx-redpacket grid-con-icon"></i>-->
-                            <!--<div class="grid-cont-right">-->
-                                <!--<div class="grid-num">{{scope.row.cash }}</div>-->
-                                <!--<div>已收金额</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</template>-->
-                <!--</el-table-column>-->
-
-            <!--</el-table>-->
-
-        </div>
-
-
     </div>
 </template>
 
@@ -160,7 +127,7 @@
                 drawId: null,
                 pageData: {
                     pageNum: 1,
-                    pageSize: 10,
+                    pageSize: 30,
                     total: 0
                 },
                 tableData: [],   //画稿列表
@@ -193,13 +160,15 @@
         components: {
             "pagination": pagination
         },
-        created() {
+        // created() {
+        //     this.query();
+        // },
+        activated(){
+            //用于查询链接详情
+            if(this.$route.query.id){
+                this.dataForm.id = this.$route.query.id;
+            }
             this.query();
-            // this.queryCashByMonth();
-        },
-        watch: {
-        },
-        computed: {
         },
         filters: {
             rounding(value) {
@@ -222,6 +191,7 @@
                 this.loading = true;
                 cashApi.selectListByPage(param).then(data => {
                     this.loading = false;
+                    this.dataForm.id = null;
                     if (data && data.code == 0) {
                         this.tableData = data.page.records;
                         this.pageData.total = data.page.total;

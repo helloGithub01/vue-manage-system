@@ -444,7 +444,7 @@
                 showVisible: false,
                 pageData: {
                     pageNum: 1,
-                    pageSize: 10,
+                    pageSize: 30,
                     total: 0
                 },
                 tableData: [],   //画稿列表

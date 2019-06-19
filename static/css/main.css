@@ -30,7 +30,7 @@ a {
     padding-bottom: 30px;
     -webkit-transition: left .3s ease-in-out;
     transition: left .3s ease-in-out;
-    background: #f0f0f0;
+    background: rgba(78, 3, 194, 0.24);
 }
 
 .content {

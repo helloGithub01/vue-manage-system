@@ -76,9 +76,9 @@
 
                         var loginParams = {
                             username: this.ruleForm.username,
-                            password: this.ruleForm.password,
-                            uuid: this.ruleForm.uuid,
-                            captcha: this.ruleForm.captcha
+                            password: this.ruleForm.password
+                            // uuid: this.ruleForm.uuid,
+                            // captcha: this.ruleForm.captcha
                         };
                         //清除缓存
                         sessionStorage.removeItem('token');
@@ -91,7 +91,7 @@
                                 sessionStorage.setItem('token', data.token);
                                 this.$router.push('/');
                             } else {
-                                this.getCaptcha();
+                                // this.getCaptcha();
                                 this.$message.error(data.msg)
                             }
 
@@ -105,7 +105,7 @@
             }
         },
         created () {
-            this.getCaptcha();
+            // this.getCaptcha();
         },
     }
 </script>
@@ -115,7 +115,7 @@
         position: relative;
         width:100%;
         height:100%;
-        background-image: url(../../assets/login-bg.jpg);
+        background-image: url(../../assets/230557.png);
         background-size: 100%;
     }
     .ms-title{
@@ -123,7 +123,7 @@
         line-height: 50px;
         text-align: center;
         font-size:20px;
-        color: #fff;
+        color: #ff5260;
         border-bottom: 1px solid #ddd;
     }
     .ms-login{
@@ -158,6 +158,6 @@
     .login-tips{
         font-size:12px;
         line-height:30px;
-        color:#fff;
+        color: #4e8bff;
     }
 </style>

@@ -5,7 +5,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            :page-sizes="[5, 10, 15, 30]"
+            :page-sizes="[10,30,50,100]"
             :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
@@ -28,7 +28,7 @@
         },
         data() {
             return {
-                pageSize: 10
+                pageSize: 30
             };
         },
         methods: {

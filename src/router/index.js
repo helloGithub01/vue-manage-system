@@ -31,7 +31,7 @@ export default new Router({
                 },
                 {
                     path: '/cashTable',
-                    component: resolve => require(['../components/page/cashTable.vue'], resolve),
+                    component: resolve => require(['../components/page/CashTable.vue'], resolve),
                     meta: { title: '收款记录' }
                 },
                 {

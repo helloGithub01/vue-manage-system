@@ -7,23 +7,25 @@
         </div>
         <div class="container">
             <h2>图片</h2>
-            <div class="search-box">
-                <el-input class="search" size="large" v-model="keyword" clearable placeholder="请输入图标名称"></el-input>
-            </div>
+            <!--<div class="search-box">-->
+                <!--<el-input class="search" size="large" v-model="keyword" clearable placeholder="请输入图标名称"></el-input>-->
+            <!--</div>-->
             <ul>
                 <li class="icon-li" v-for="(item,index) in ImgList" :key="index">
                     <div class="icon-li-content">
-                        <img :src="item.url" class="show-img" @click="showBigImg(item.url)"/>
+                        <img :src="item.picUrl" class="show-img" @click="showBigImg(index)"/>
                     </div>
                 </li>
             </ul>
+
             <div class="pagination">
                 <el-pagination
                     background
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                     :currentPage="pageData.pageNum"
-                    :page-sizes="[10,15,25,30]"
+                    :page-sizes="[10,20,40,50]"
+                    :page-size="pageData.pageSize"
                     layout="total, sizes, prev, pager, next, jumper"
                     :total="pageData.total">
                 </el-pagination>
@@ -33,25 +35,61 @@
         <el-dialog
             title="预览大图"
             :close-on-click-modal="true"
+            height="100%" width="70%"
             :visible.sync="showVisible">
-            <div>
-                <img :src="picUrl" width="100%"/>
+            <div class="item">
+                <img :src="picUrl" width="80%"/>
+                <div class="right">
+                    <div><font color="#411183">接单日期:</font> <i class="el-icon-lx-time" style="font-size: 18px;color: #2b33ff">{{dateFormatter(drawData.orderDate)}}</i></div>
+                    <div><font color="#411183">画稿名称:</font> {{drawData.drawName}}</div>
+                    <div><font color="#411183">画稿客户:</font> {{drawData.source}}</div>
+                    <div><font color="#411183">画稿金额:</font> <i class="el-icon-lx-redpacket_fill" style="font-size: 18px;color: #ff5900">{{drawData.drawAmount}}</i></div>
+                    <div><font color="#411183">画稿类型:</font> {{drawData.drawType}}</div>
+                    <div><font color="#411183">收款状态:</font> <el-tag  type="success">{{ stateFormatter(drawData.state)}}</el-tag></div>
+                    <div>收款详情:
+                        <router-link :to="{path:'/cashTable',query: {id: id}}">
+                           <i  type="primary" style="font-size: 15px;color: #ff5900" class="el-icon-view el-icon--right">跳转链接</i>
+                        </router-link>
+                    </div>
+                </div>
             </div>
+            <!--<el-carousel :interval="5000" arrow="always" height="500px">-->
+                <!--<el-carousel-item v-for="(item,index) in ImgList" :key="index">-->
+                <!--</el-carousel-item>-->
+            <!--</el-carousel>-->
+
         </el-dialog>
     </div>
 </template>
 
 <script>
     import ossApi from '../../../api/business/picture';
+    import drawApi from '../../../api/business/draw';
+    import moment from 'moment';
 
     export default {
         data: function(){
             return {
+                //用于传递跳转参数
+                id:null,
                 keyword: '',
                 ImgList:[],
+                formLabelAlign: {
+                    name: '',
+                    region: '',
+                    type: ''
+                },
+                drawData:{
+                    drawName:null,
+                    orderDate:null,
+                    source:null,
+                    drawType:null,
+                    drawAmount:null,
+                    state:null
+                },
                 pageData: {
                     pageNum: 1,
-                    pageSize: 10,
+                    pageSize: 40,
                     total: 0
                 },
                 showVisible:false,
@@ -198,11 +236,15 @@
         methods:{
             query(pageNum, pageSize) {
 
-                var param = {};
+                var param = {
+                    picUrl:"yes",
+                    min: 0,
+                    max: 0,
+                };
                 param.current = pageNum || 1;
                 param.size = pageSize || this.pageData.pageSize;
-                ossApi.selectListByPage(param).then(data => {
-
+                //展示图片相关信息(调用此接口)
+                drawApi.selectListByPage(param).then(data => {
                     if (data && data.code == 0) {
                         this.ImgList = data.page.list;
                         this.pageData.total = data.page.totalCount;
@@ -214,16 +256,40 @@
                     this.pageData.pageSize = param.size;
                 });
             },
+            dateFormatter(value) {
+                return moment(value).format("YYYY-MM-DD");
+            },
+            stateFormatter(value) {
+                switch (value){
+                    case 0:
+                        return "未收款";
+                        break;
+                    case 1:
+                        return "部分收款";
+                        break;
+                    case 2:
+                        return "收完款";
+                        break;
+                    case 3:
+                        return "追加款";
+                        break;
+                    default:
+                        return "";
+                        break;
+                }
+            },
             handleSizeChange(val) {
                 this.query(1,val);
             },
             handleCurrentChange(val) {
                 this.query(val,this.pageData.pageSize);
             },
-            showBigImg(url) {
-                if(url != null){
+            showBigImg(index) {
+                if(index != null){
                     this.showVisible = true
-                    this.picUrl = url
+                    this.picUrl = this.ImgList[index].picUrl
+                    this.drawData =  this.ImgList[index]
+                    this.id = this.ImgList[index].id
                 }
             },
         }
@@ -231,6 +297,12 @@
 </script>
 
 <style scoped>
+
+    .el-carousel__item img {
+        position: relative;
+        left: 30px;
+        top: 30px;
+    }
 .example-p{
     height: 45px;
     display: flex;
@@ -249,8 +321,8 @@ ul,li{
 .icon-li{
     display: inline-block;
     padding: 10px;
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
 }
 .icon-li-content{
     display: flex;
@@ -272,5 +344,26 @@ ul,li{
     .show-img{
         width:90%;
         height:90%;
+    }
+
+    .item div{
+        display: inline-block;
+    }
+
+    .right {
+        position: absolute;
+        width: 240px;
+        right: 10px;
+        padding: 10px;
+        /*text-align: center;*/
+    }
+
+    .right div{
+        /*display: flex;*/
+        /*flex-flow:row wrap;*/
+        /*align-items:center;*/
+        /*text-align: center;*/
+        padding: 10px;
+        font-size: 20px;
     }
 </style>
