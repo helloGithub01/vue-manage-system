@@ -4,12 +4,12 @@
             <div class="ms-title">画稿管理系统</div>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0px" class="ms-content">
                 <el-form-item prop="username">
-                    <el-input v-model="ruleForm.username" placeholder="用户名">
+                    <el-input v-model="ruleForm.username" placeholder="用户名" clearable>
                         <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="password">
-                    <el-input type="password" placeholder="密码" v-model="ruleForm.password" @keyup.enter.native="submitForm('ruleForm')">
+                    <el-input type="password" placeholder="密码" clearable v-model="ruleForm.password" @keyup.enter.native="submitForm('ruleForm')">
                         <el-button slot="prepend" icon="el-icon-lx-lock"></el-button>
                     </el-input>
                 </el-form-item>
@@ -115,7 +115,7 @@
         position: relative;
         width:100%;
         height:100%;
-        background-image: url(../../assets/230557.png);
+        background-image: url(../../assets/tiyi-pic.jpg);
         background-size: 100%;
     }
     .ms-title{
@@ -123,7 +123,7 @@
         line-height: 50px;
         text-align: center;
         font-size:20px;
-        color: #ff5260;
+        color: #1bd163;
         border-bottom: 1px solid #ddd;
     }
     .ms-login{

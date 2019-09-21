@@ -227,5 +227,8 @@
         width:inherit;
         height:inherit;
     }
+    .form-box{
+        padding-left: 30%;
+    }
 
 </style>

@@ -81,6 +81,12 @@ export default new Router({
                     meta: { title: '权限测试', permission: true }
                 },
                 {
+                    // 日志页面
+                    path: '/log',
+                    component: resolve => require(['../components/page/SysLog.vue'], resolve),
+                    meta: { title: '操作日志', permission: true }
+                },
+                {
                     path: '/404',
                     component: resolve => require(['../components/page/404.vue'], resolve),
                     meta: { title: '404' }

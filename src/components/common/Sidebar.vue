@@ -1,6 +1,6 @@
 <template>
     <div class="sidebar">
-        <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#1d1d6a"
+        <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#274d83"
             text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router>
             <template v-for="item in items">
                 <template v-if="item.subs">
@@ -44,17 +44,17 @@
                         title: '系统首页'
                     },
                     {
-                        icon: 'el-icon-lx-copy',
-                        index: 'tabs',
-                        title: '系统消息'
+                        icon: 'el-icon-lx-add',
+                        index: 'form',
+                        title: '新增画稿'
                     },
                     {
-                        icon: 'el-icon-lx-cascades',
+                        icon: 'el-icon-lx-searchlist',
                         index: 'drawTable',
                         title: '画稿列表'
                     },
                     {
-                        icon: 'el-icon-lx-rankfill',
+                        icon: 'el-icon-lx-edit',
                         index: 'cashTable',
                         title: '收款记录'
                     },
@@ -76,15 +76,11 @@
                     {
                         icon: 'el-icon-lx-calendar',
                         index: '3',
-                        title: '表单相关',
+                        title: '三级菜单',
                         subs: [
                             {
-                                index: 'form',
-                                title: '画稿表单'
-                            },
-                            {
                                 index: '3-2',
-                                title: '三级菜单',
+                                title: '编辑器',
                                 subs: [
                                     {
                                         index: 'editor',
@@ -97,15 +93,25 @@
                                 ]
                             },
                             {
+                                icon: 'el-icon-lx-text',
+                                index: 'log',
+                                title: '操作日志'
+                            },
+                            {
                                 index: 'upload',
                                 title: '文件上传'
-                            }
+                            },
+                            {
+                                icon: 'el-icon-lx-emoji',
+                                index: 'icon',
+                                title: '自定义图标'
+                            },
                         ]
                     },
                     {
-                        icon: 'el-icon-lx-emoji',
-                        index: 'icon',
-                        title: '自定义图标'
+                        icon: 'el-icon-lx-copy',
+                        index: 'tabs',
+                        title: '系统消息'
                     },
                     {
                         icon: 'el-icon-rank',
