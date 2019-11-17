@@ -115,7 +115,7 @@
         position: relative;
         width:100%;
         height:100%;
-        background-image: url(../../assets/tiyi-pic.jpg);
+        background-image: url(../../assets/earth.jpg);
         background-size: 100%;
     }
     .ms-title{
@@ -123,7 +123,7 @@
         line-height: 50px;
         text-align: center;
         font-size:20px;
-        color: #1bd163;
+        color: #fef6cf;
         border-bottom: 1px solid #ddd;
     }
     .ms-login{

@@ -529,25 +529,7 @@
             }
         },
         computed: {
-            data() {
-                return this.tableData.filter((d) => {
-                    let is_del = false;
-                    for (let i = 0; i < this.del_list.length; i++) {
-                        if (d.name === this.del_list[i].name) {
-                            is_del = true;
-                            break;
-                        }
-                    }
-                    if (!is_del) {
-                        if (d.address.indexOf(this.select_cate) > -1 &&
-                            (d.name.indexOf(this.select_word) > -1 ||
-                                d.address.indexOf(this.select_word) > -1)
-                        ) {
-                            return d;
-                        }
-                    }
-                })
-            }
+
         },
         filters:{
             rounding (value) {
@@ -1010,14 +992,41 @@
             },
             //删除多条记录
             delAll() {
+                //重新置空
+                this.del_list = [];
                 const length = this.multipleSelection.length;
-                let str = '';
-                this.del_list = this.del_list.concat(this.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += this.multipleSelection[i].name + ' ';
+                if(length <= 0 ){
+                    this.$message.info("请选择需要删除的记录");
+                    return;
                 }
-                this.$message.error('删除了' + str);
-                this.multipleSelection = [];
+                //只有未收款才可以删除
+                for (let i = 0; i < length; i++) {
+                    this.del_list = this.del_list.concat(this.multipleSelection[i].id);
+                    if(this.multipleSelection[i].state != 0){
+                        this.$message.info("只有未收款才可以删除");
+                        return;
+                    }
+                }
+                this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+
+                    drawApi.deleteBatch(this.del_list).then(data =>{
+                        if (data && data.code == 0) {
+                            this.$message.success("删除成功!")
+                            this.query();
+                        }else{
+                            this.$message.error("删除失败!")
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;

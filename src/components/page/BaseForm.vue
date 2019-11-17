@@ -6,7 +6,7 @@
                 <el-breadcrumb-item>基本表单</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
-        <div class="container">
+        <div class="container bg">
             <div class="form-box">
                 <el-form ref="form" :model="form" :rules="rules" label-width="80px">
                     <el-form-item label="画稿名称" prop="drawName">
@@ -229,6 +229,9 @@
     }
     .form-box{
         padding-left: 30%;
+    }
+    .bg{
+        background-color: #cccfff
     }
 
 </style>

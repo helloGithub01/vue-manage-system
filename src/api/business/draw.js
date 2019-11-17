@@ -25,6 +25,13 @@ export default {
         return Vue.prototype.global.methodPost(url + '/update', params);
     },
     /**
+     * 删除
+     * @param 实体对象
+     */
+    deleteBatch(params) {
+        return Vue.prototype.global.methodPost(url + '/delete', params);
+    },
+    /**
      * 删除收款记录
      * @param 实体对象
      */
